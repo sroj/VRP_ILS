@@ -6,4 +6,9 @@ package vrp_ils;
  * @author Simon Rojas
  */
 public class Graph {
+
+    private int[][] costs;
+
+
+
 }

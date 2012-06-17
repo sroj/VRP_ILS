@@ -12,6 +12,7 @@ public class VehicleRoutingProblem {
     private int dropTime;
     private int numberOfCustomers;
     private int maximumRouteTime;
+    private int[] customerDemands;
 
     /**
      * Constructor vacio.
@@ -54,5 +55,14 @@ public class VehicleRoutingProblem {
 
     public void addNode(int origin, int destiny, int cost) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void addCustomerDemand(int customerID, int demand) throws Exception {
+
+        if (customerID < 0 || customerID > this.numberOfCustomers) {
+            throw new Exception("El customerID es invalido");
+        }
+
+        this.customerDemands[customerID] = demand;
     }
 }
