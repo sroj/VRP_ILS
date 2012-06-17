@@ -17,21 +17,22 @@ public class Main {
     private static MetaheuristicOptimizationAlgorithm algorithm;
     
     
-    private static void LoadData(String path) throws IOException{
+    private static void LoadData(String path) throws Exception{
         BufferedReader file = new BufferedReader(new FileReader(path));
         String separator[];
-        vrp = new VehicleRoutingProblem();
+        
         String line = file.readLine();
         separator = line.split(" ");
         int i=0;
         if(separator[i].equals("")){
             i++;
         }
-        vrp.setNumberOfCustomers(Integer.parseInt(separator[i]));
-        vrp.setVehicleCapacity(Integer.parseInt(separator[i+1]));
-        vrp.setMaximumRouteTime(Integer.parseInt(separator[i+2]));
-        vrp.setDropTime(Integer.parseInt(separator[i+3]));
         
+        int n = Integer.parseInt(separator[i]);
+        int capacity= Integer.parseInt(separator[i+1]);
+        int maxRouteTime =Integer.parseInt(separator[i+2]);
+        int dropTime = Integer.parseInt(separator[i+3]);
+        vrp = new VehicleRoutingProblem(n, capacity, maxRouteTime, dropTime);
         int coord[][]= new int[vrp.getNumberOfCustomers()+1][2];
         line = file.readLine();
         separator = line.split(" ");
@@ -41,7 +42,19 @@ public class Main {
         }
         coord[0][0] = Integer.parseInt(separator[i]);
         coord[0][1] = Integer.parseInt(separator[i+1]);
-        
+        vrp.addCustomerDemand(0, 0);
+        for(int j=1; j<=vrp.getNumberOfCustomers(); j++){
+            line = file.readLine();
+            separator = line.split(" ");
+            i=0;
+            if(separator[i].equals("")){
+                i++;
+            }
+            coord[j][0]=Integer.parseInt(separator[i]);
+            coord[j][1]=Integer.parseInt(separator[i+1]);
+            vrp.addCustomerDemand(j, Integer.parseInt(separator[i+2]));
+                    
+        }
     }
     /**
      * @param args the command line arguments
