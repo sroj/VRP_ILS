@@ -13,6 +13,13 @@ public class VehicleRoutingProblem {
     private int customerNumber;
     private int maximumRouteTime;
 
+    /**
+     * Constructor vacio.
+     */
+    public VehicleRoutingProblem() {
+        this.routesData = new Graph();
+    }
+
     public int getCustomerNumber() {
         return customerNumber;
     }
@@ -47,9 +54,5 @@ public class VehicleRoutingProblem {
 
     public void addNode(int origin, int destiny, int cost) {
         throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public VehicleRoutingProblem() {
-        this.routesData = new Graph();
     }
 }
