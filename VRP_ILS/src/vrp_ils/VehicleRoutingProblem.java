@@ -14,7 +14,4 @@ public class VehicleRoutingProblem {
     public VehicleRoutingProblem() {
         this.routesData = new Graph();
     }
-
-    public void readFileData(String fileName) throws IOException {
-    }
 }
