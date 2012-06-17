@@ -7,8 +7,6 @@ package vrp_ils;
  */
 public class Graph {
 
-    private int[][] costs;
-
 
 
 }
