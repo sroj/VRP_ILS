@@ -19,15 +19,13 @@ public class Main {
     
     private static void LoadData(String path) throws Exception{
         BufferedReader file = new BufferedReader(new FileReader(path));
-        String separator[];
-        
+        String separator[];        
         String line = file.readLine();
         separator = line.split(" ");
         int i=0;
         if(separator[i].equals("")){
             i++;
         }
-        
         int n = Integer.parseInt(separator[i]);
         int capacity= Integer.parseInt(separator[i+1]);
         int maxRouteTime =Integer.parseInt(separator[i+2]);
@@ -52,9 +50,9 @@ public class Main {
             }
             coord[j][0]=Integer.parseInt(separator[i]);
             coord[j][1]=Integer.parseInt(separator[i+1]);
-            vrp.addCustomerDemand(j, Integer.parseInt(separator[i+2]));
-                    
+            vrp.addCustomerDemand(j, Integer.parseInt(separator[i+2]));                    
         }
+        fillMatrix(coord);
     }
     /**
      * @param args the command line arguments
@@ -63,6 +61,19 @@ public class Main {
         if (args.length != 1) {
             System.err.println("Numero de argumentos invalidos");
             System.exit(1);
+        }
+    }
+
+    private static void fillMatrix(int[][] coord) throws Exception {
+        int xd;
+        int yd;
+        for (int i = 0; i < coord.length; i++) {
+            for (int j = i + 1; j < coord.length; j++) {
+                xd = coord[i][0] - coord[j][0];
+                yd = coord[i][1] - coord[j][1];
+                int distance = (int)Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
+                vrp.addArc(i, j, distance);
+            }
         }
     }
 }
