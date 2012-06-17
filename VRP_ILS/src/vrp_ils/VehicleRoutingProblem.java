@@ -7,18 +7,22 @@ package vrp_ils;
  */
 public class VehicleRoutingProblem {
 
-    private Graph routesData;
     private int vehicleCapacity;
     private int dropTime;
     private int numberOfCustomers;
     private int maximumRouteTime;
     private int[] customerDemands;
+    private int[][] costs;
 
     /**
      * Constructor vacio.
      */
-    public VehicleRoutingProblem() {
-        this.routesData = new Graph();
+    public VehicleRoutingProblem(int numberOfCustomers, int vehicleCapacity,
+            int maximumRouteTime, int dropTime) {
+        this.numberOfCustomers = numberOfCustomers;
+        this.vehicleCapacity = vehicleCapacity;
+        this.maximumRouteTime = maximumRouteTime;
+        this.dropTime = dropTime;
     }
 
     public int getNumberOfCustomers() {
@@ -53,8 +57,12 @@ public class VehicleRoutingProblem {
         this.vehicleCapacity = vehicleCapacity;
     }
 
-    public void addNode(int origin, int destiny, int cost) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public void addArc(int origin, int destiny, int cost) throws Exception {
+        if (origin < 0 || origin > this.numberOfCustomers
+                || destiny < 0 || destiny > this.numberOfCustomers) {
+            throw new Exception("El nodo de origen y/o destino es invalido.");
+        }
+        this.costs[origin][destiny] = cost;
     }
 
     public void addCustomerDemand(int customerID, int demand) throws Exception {
@@ -62,7 +70,6 @@ public class VehicleRoutingProblem {
         if (customerID < 0 || customerID > this.numberOfCustomers) {
             throw new Exception("El customerID es invalido");
         }
-
         this.customerDemands[customerID] = demand;
     }
 }
