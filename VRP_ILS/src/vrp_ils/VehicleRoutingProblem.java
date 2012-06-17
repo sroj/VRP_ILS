@@ -15,7 +15,7 @@ public class VehicleRoutingProblem {
     private int[][] costs;
 
     /**
-     * Constructor vacio.
+     * Constructor.
      */
     public VehicleRoutingProblem(int numberOfCustomers, int vehicleCapacity,
             int maximumRouteTime, int dropTime) {
