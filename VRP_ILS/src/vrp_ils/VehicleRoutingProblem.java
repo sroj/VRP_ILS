@@ -7,10 +7,10 @@ package vrp_ils;
  */
 public class VehicleRoutingProblem {
 
-    private int vehicleCapacity;
-    private int dropTime;
     private int numberOfCustomers;
+    private int vehicleCapacity;
     private int maximumRouteTime;
+    private int dropTime;
     private int[] customerDemands;
     private int[][] costs;
 
@@ -19,10 +19,30 @@ public class VehicleRoutingProblem {
      */
     public VehicleRoutingProblem(int numberOfCustomers, int vehicleCapacity,
             int maximumRouteTime, int dropTime) {
+
         this.numberOfCustomers = numberOfCustomers;
         this.vehicleCapacity = vehicleCapacity;
         this.maximumRouteTime = maximumRouteTime;
         this.dropTime = dropTime;
+        this.customerDemands = new int[numberOfCustomers];
+
+        // El customer 0 es en realidad el deposito de camiones, que no tiene
+        // demanda alguna de ningun producto.
+        this.customerDemands[0] = 0;
+
+        this.costs = new int[numberOfCustomers][numberOfCustomers];
+
+        //Se inicializa en costo "infinito" el arreglo de costos, para
+        //el hecho de que algunas rutas son invalidas.
+        initializeCostsArray();
+    }
+
+    private void initializeCostsArray() {
+        for (int i = 0; i < this.numberOfCustomers; i++) {
+            for (int j = 0; j < this.numberOfCustomers; j++) {
+                this.costs[i][j] = Integer.MAX_VALUE;
+            }
+        }
     }
 
     public int getNumberOfCustomers() {
@@ -57,19 +77,19 @@ public class VehicleRoutingProblem {
         this.vehicleCapacity = vehicleCapacity;
     }
 
-    public void addArc(int origin, int destiny, int cost) throws Exception {
-        if (origin < 0 || origin > this.numberOfCustomers
-                || destiny < 0 || destiny > this.numberOfCustomers) {
-            throw new Exception("El nodo de origen y/o destino es invalido.");
-        }
+    public void addCost(int origin, int destiny, int cost) {
         this.costs[origin][destiny] = cost;
     }
 
-    public void addCustomerDemand(int customerID, int demand) throws Exception {
+    public int getCost(int origin, int destiny) {
+        return this.costs[origin][destiny];
+    }
 
-        if (customerID < 0 || customerID > this.numberOfCustomers) {
-            throw new Exception("El customerID es invalido");
-        }
+    public void addCustomerDemand(int customerID, int demand) {
         this.customerDemands[customerID] = demand;
+    }
+
+    public int getCustomerDemand(int customerID) {
+        return this.customerDemands[customerID];
     }
 }
