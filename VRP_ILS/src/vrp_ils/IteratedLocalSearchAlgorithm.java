@@ -1,7 +1,5 @@
 package vrp_ils;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author Andrea Aranguren
@@ -10,10 +8,15 @@ import java.util.ArrayList;
 public class IteratedLocalSearchAlgorithm
         implements MetaheuristicOptimizationAlgorithm {
 
-    ArrayList<ArrayList<Integer>> routes;
+    //INICIO de estructuras para representar una solucion al problema
+    int[] customers;
+    int[] partitionIndexes;
+    //FIN de estructuras para representar una solución al problema
     VehicleRoutingProblem vrpInstance;
 
     public IteratedLocalSearchAlgorithm(VehicleRoutingProblem vrpInstance) {
+        this.customers = new int[vrpInstance.getNumberOfCustomers()];
+        this.partitionIndexes = new int[vrpInstance.getNumberOfCustomers()];
         this.vrpInstance = vrpInstance;
         constructInitialSolution();
     }
