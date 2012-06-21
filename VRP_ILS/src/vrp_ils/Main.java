@@ -12,14 +12,14 @@ import java.io.IOException;
 
 
 public class Main {
-    
+
     private static VehicleRoutingProblem vrp;
     private static MetaheuristicOptimizationAlgorithm algorithm;
-    
-    
+
+
     private static void LoadData(String path) throws Exception{
         BufferedReader file = new BufferedReader(new FileReader(path));
-        String separator[];        
+        String separator[];
         String line = file.readLine();
         separator = line.split(" ");
         int i=0;
@@ -50,7 +50,7 @@ public class Main {
             }
             coord[j][0]=Integer.parseInt(separator[i]);
             coord[j][1]=Integer.parseInt(separator[i+1]);
-            vrp.addCustomerDemand(j, Integer.parseInt(separator[i+2]));                    
+            vrp.addCustomerDemand(j, Integer.parseInt(separator[i+2]));
         }
         fillMatrix(coord);
     }
@@ -72,7 +72,7 @@ public class Main {
                 xd = coord[i][0] - coord[j][0];
                 yd = coord[i][1] - coord[j][1];
                 int distance = (int)Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
-                vrp.addArc(i, j, distance);
+                vrp.addCost(i, j, distance);
             }
         }
     }
