@@ -11,12 +11,13 @@ public class IteratedLocalSearchAlgorithm
     //INICIO de estructuras para representar una solucion al problema
     int[] customers;
     int[] partitionIndexes;
+    int numberOfPartitionIndexes;
     //FIN de estructuras para representar una solución al problema
     VehicleRoutingProblem vrpInstance;
 
     public IteratedLocalSearchAlgorithm(VehicleRoutingProblem vrpInstance) {
         this.customers = new int[vrpInstance.getNumberOfCustomers()];
-        this.partitionIndexes = new int[vrpInstance.getNumberOfCustomers()];
+        this.partitionIndexes = new int[vrpInstance.getNumberOfCustomers() - 1];
         this.vrpInstance = vrpInstance;
         constructInitialSolution();
     }
