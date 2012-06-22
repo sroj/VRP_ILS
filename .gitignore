@@ -4,3 +4,9 @@
 *.jar
 *.war
 *.ear
+/VRP_ILS/nbproject/private/
+/VRP_ILS/build/
+/VRP_ILS/dist/
+/VRP_Solvers/nbproject/private/
+/VRP_Solvers/build/
+/VRP_Solvers/dist/
