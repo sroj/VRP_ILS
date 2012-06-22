@@ -51,6 +51,10 @@ public class Main {
         fillMatrix(coord);
     }
     
+    private static void writeResults(SolutionSet solution){
+        
+    }
+
     private static void fillMatrix(int[][] coord) throws Exception {
         int xd;
         int yd;
@@ -58,11 +62,13 @@ public class Main {
             for (int j = i + 1; j < coord.length; j++) {
                 xd = coord[i][0] - coord[j][0];
                 yd = coord[i][1] - coord[j][1];
-                int distance = (int)Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
+                int distance = (int) Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
                 vrp.addCost(i, j, distance);
+                System.out.println(i + "," + j+ "->"+ distance);
             }
         }
     }
+
     /**
      * @param args the command line arguments
      */
@@ -71,6 +77,13 @@ public class Main {
             System.err.println("Numero de argumentos invalidos");
             System.exit(1);
         }
-        
+        String InstanceName = args[0];
+        try{
+            LoadData(InstanceName);
+        }catch (Exception e){
+            System.out.println("Error.");
+            System.out.print(e);
+            System.exit(1);
+        }
     }
 }
