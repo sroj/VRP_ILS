@@ -1,7 +1,10 @@
-package vrp_ils;
+package VRP_ILS;
+
+import VRP.MetaheuristicOptimizationAlgorithm;
+import VRP.SolutionSet;
+import VRP.VehicleRoutingProblem;
 
 /**
- *
  * @author Andrea Aranguren
  * @author Simon Rojas
  */

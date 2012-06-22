@@ -1,10 +1,11 @@
-package vrp_ils;
+package VRP_ILS;
 
+import VRP.MetaheuristicOptimizationAlgorithm;
+import VRP.VehicleRoutingProblem;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
 /**
- *
  * @author Andrea Aranguren
  * @author Simon Rojas
  */
@@ -50,19 +51,7 @@ public class Main {
         }
         fillMatrix(coord);
     }
-    
-    private static void fillMatrix(int[][] coord) throws Exception {
-        int xd;
-        int yd;
-        for (int i = 0; i < coord.length; i++) {
-            for (int j = i + 1; j < coord.length; j++) {
-                xd = coord[i][0] - coord[j][0];
-                yd = coord[i][1] - coord[j][1];
-                int distance = (int)Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
-                vrp.addCost(i, j, distance);
-            }
-        }
-    }
+
     /**
      * @param args the command line arguments
      */
@@ -71,6 +60,18 @@ public class Main {
             System.err.println("Numero de argumentos invalidos");
             System.exit(1);
         }
-        
+    }
+
+    private static void fillMatrix(int[][] coord) throws Exception {
+        int xd;
+        int yd;
+        for (int i = 0; i < coord.length; i++) {
+            for (int j = i + 1; j < coord.length; j++) {
+                xd = coord[i][0] - coord[j][0];
+                yd = coord[i][1] - coord[j][1];
+                int distance = (int) Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
+                vrp.addCost(i, j, distance);
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
-package vrp_ils;
+package VRP;
 
 /**
- *
  * @author Andrea Aranguren
  * @author Simon Rojas
  */
