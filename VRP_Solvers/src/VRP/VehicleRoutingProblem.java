@@ -23,13 +23,13 @@ public class VehicleRoutingProblem {
         this.vehicleCapacity = vehicleCapacity;
         this.maximumRouteTime = maximumRouteTime;
         this.dropTime = dropTime;
-        this.customerDemands = new int[numberOfCustomers];
+        this.customerDemands = new int[numberOfCustomers + 1];
 
         // El customer 0 es en realidad el deposito de camiones, que no tiene
         // demanda alguna de ningun producto.
         this.customerDemands[0] = 0;
 
-        this.costs = new int[numberOfCustomers][numberOfCustomers];
+        this.costs = new int[numberOfCustomers + 1][numberOfCustomers + 1];
 
         //Se inicializa en costo "infinito" el arreglo de costos, para
         //el hecho de que algunas rutas son invalidas.
@@ -37,8 +37,8 @@ public class VehicleRoutingProblem {
     }
 
     private void initializeCostsArray() {
-        for (int i = 0; i < this.numberOfCustomers; i++) {
-            for (int j = 0; j < this.numberOfCustomers; j++) {
+        for (int i = 0; i <= this.numberOfCustomers; i++) {
+            for (int j = 0; j <= this.numberOfCustomers; j++) {
                 this.costs[i][j] = Integer.MAX_VALUE;
             }
         }
@@ -77,6 +77,7 @@ public class VehicleRoutingProblem {
     }
 
     public void addCost(int origin, int destiny, int cost) {
+        this.costs[origin][destiny] = cost;
         this.costs[origin][destiny] = cost;
     }
 

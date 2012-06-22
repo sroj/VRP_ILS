@@ -22,7 +22,7 @@ public class IteratedLocalSearchAlgorithm
         this.customers = new int[vrpInstance.getNumberOfCustomers()];
         this.partitionIndexes = new int[vrpInstance.getNumberOfCustomers() - 1];
         this.vrpInstance = vrpInstance;
-        constructInitialSolution();
+        //constructInitialSolution();
     }
 
     private void constructInitialSolution() {
@@ -34,6 +34,9 @@ public class IteratedLocalSearchAlgorithm
 
     @Override
     public SolutionSet execute() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO aqui coloqué un return chimbo, para probar la escritura enel archivo
+        return(new ILSSolutionSet(numberOfPartitionIndexes, numberOfPartitionIndexes,
+                numberOfPartitionIndexes, numberOfPartitionIndexes,
+                numberOfPartitionIndexes, "hola"));
     }
 }

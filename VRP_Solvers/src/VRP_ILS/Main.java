@@ -1,9 +1,9 @@
 package VRP_ILS;
 
 import VRP.MetaheuristicOptimizationAlgorithm;
+import VRP.SolutionSet;
 import VRP.VehicleRoutingProblem;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 
 /**
  * @author Andrea Aranguren
@@ -52,14 +52,12 @@ public class Main {
         fillMatrix(coord);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("Numero de argumentos invalidos");
-            System.exit(1);
-        }
+    private static void writeFile(SolutionSet solution, String instanceName)
+            throws IOException {
+        String outFileName = ("stat.").concat(instanceName);
+        BufferedWriter out = new BufferedWriter(new FileWriter(outFileName));
+        out.write("aString");
+        out.close();
     }
 
     private static void fillMatrix(int[][] coord) throws Exception {
@@ -72,6 +70,27 @@ public class Main {
                 int distance = (int) Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
                 vrp.addCost(i, j, distance);
             }
+        }
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("Numero de argumentos invalidos");
+            System.exit(1);
+        }
+        String InstanceName = args[0];
+        try {
+            LoadData(InstanceName);
+            algorithm = new IteratedLocalSearchAlgorithm(vrp);
+            SolutionSet solution = algorithm.execute();
+            writeFile(solution, InstanceName);
+        } catch (Exception e) {
+            System.out.println("Error.");
+            System.out.print(e);
+            System.exit(1);
         }
     }
 }
