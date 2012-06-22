@@ -16,7 +16,6 @@ public class Main {
     private static VehicleRoutingProblem vrp;
     private static MetaheuristicOptimizationAlgorithm algorithm;
     
-    
     private static void LoadData(String path) throws Exception{
         BufferedReader file = new BufferedReader(new FileReader(path));
         String separator[];        
@@ -54,16 +53,7 @@ public class Main {
         }
         fillMatrix(coord);
     }
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("Numero de argumentos invalidos");
-            System.exit(1);
-        }
-    }
-
+    
     private static void fillMatrix(int[][] coord) throws Exception {
         int xd;
         int yd;
@@ -72,8 +62,18 @@ public class Main {
                 xd = coord[i][0] - coord[j][0];
                 yd = coord[i][1] - coord[j][1];
                 int distance = (int)Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
-                vrp.addArc(i, j, distance);
+                vrp.addCost(i, j, distance);
             }
         }
+    }
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("Numero de argumentos invalidos");
+            System.exit(1);
+        }
+        
     }
 }
