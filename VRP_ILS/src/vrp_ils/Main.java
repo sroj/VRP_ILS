@@ -1,7 +1,5 @@
 package vrp_ils;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 
 /**
  *
@@ -51,8 +49,12 @@ public class Main {
         fillMatrix(coord);
     }
     
-    private static void writeResults(SolutionSet solution){
-        
+    private static void writeFile(SolutionSet solution, String instanceName)
+            throws IOException{
+        String outFileName = ("stat.").concat(instanceName);
+        BufferedWriter out = new BufferedWriter(new FileWriter(outFileName));
+        out.write("aString");
+        out.close();
     }
 
     private static void fillMatrix(int[][] coord) throws Exception {
@@ -64,11 +66,10 @@ public class Main {
                 yd = coord[i][1] - coord[j][1];
                 int distance = (int) Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
                 vrp.addCost(i, j, distance);
-                System.out.println(i + "," + j+ "->"+ distance);
             }
         }
     }
-
+    
     /**
      * @param args the command line arguments
      */
@@ -80,6 +81,9 @@ public class Main {
         String InstanceName = args[0];
         try{
             LoadData(InstanceName);
+            algorithm = new IteratedLocalSearchAlgorithm(vrp);
+            SolutionSet solution = algorithm.execute();
+            writeFile(solution, InstanceName);
         }catch (Exception e){
             System.out.println("Error.");
             System.out.print(e);
