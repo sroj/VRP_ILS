@@ -88,8 +88,8 @@ public class Main {
             SolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
         } catch (Exception e) {
-            System.out.println("Error.");
-            System.out.print(e);
+            System.out.print("Error: ");
+            System.out.println(e.getMessage());
             System.exit(1);
         }
     }
