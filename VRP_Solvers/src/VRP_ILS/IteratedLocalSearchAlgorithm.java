@@ -35,7 +35,7 @@ public class IteratedLocalSearchAlgorithm
     @Override
     public SolutionSet execute() {
         //TODO aqui coloqué un return chimbo, para probar la escritura enel archivo
-        return(new ILSSolutionSet(numberOfPartitionIndexes, numberOfPartitionIndexes,
+        return (new ILSSolutionSet(numberOfPartitionIndexes, numberOfPartitionIndexes,
                 numberOfPartitionIndexes, numberOfPartitionIndexes,
                 numberOfPartitionIndexes, "hola"));
     }

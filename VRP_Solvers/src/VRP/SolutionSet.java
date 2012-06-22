@@ -10,6 +10,10 @@ public abstract class SolutionSet {
     //INTERESANTES PARA CADA ALGORITMO, Y SUS GETTERS Y SETTERS.
     protected double executionTime;
 
+    protected SolutionSet(double executionTime) {
+        this.executionTime = executionTime;
+    }
+
     public double getExecutionTime() {
         return executionTime;
     }
