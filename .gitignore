@@ -4,9 +4,10 @@
 *.jar
 *.war
 *.ear
-/VRP_ILS/nbproject/private/
-/VRP_ILS/build/
-/VRP_ILS/dist/
+
+# Instancias del problema #
+/VRP_Solvers/*.txt
+
 /VRP_Solvers/nbproject/private/
 /VRP_Solvers/build/
 /VRP_Solvers/dist/
