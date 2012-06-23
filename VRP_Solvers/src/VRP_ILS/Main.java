@@ -69,6 +69,7 @@ public class Main {
                 yd = coord[i][1] - coord[j][1];
                 int distance = (int) Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
                 vrp.addCost(i, j, distance);
+                vrp.addCost(j, i, distance);
             }
         }
     }

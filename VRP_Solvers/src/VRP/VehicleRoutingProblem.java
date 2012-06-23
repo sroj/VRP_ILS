@@ -78,7 +78,6 @@ public class VehicleRoutingProblem {
 
     public void addCost(int origin, int destiny, int cost) {
         this.costs[origin][destiny] = cost;
-        this.costs[origin][destiny] = cost;
     }
 
     public int getCost(int origin, int destiny) {
