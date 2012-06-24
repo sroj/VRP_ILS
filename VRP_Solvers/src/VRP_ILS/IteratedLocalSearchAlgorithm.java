@@ -50,11 +50,12 @@ public class IteratedLocalSearchAlgorithm
             mergeRoutes(index);
             index = getBestSaving(s);
         }
+        boolean valid = validateResult();
         printResult();
+        System.out.println("Es valida: " + valid);
     }
 
     private void mergeRoutes(Index index) {
-
         int i = getIndexOfRouteI(index.i);
         int j = getIndexOfRouteJ(index.j);
         if (i != -1 && j != -1) {
@@ -168,6 +169,48 @@ public class IteratedLocalSearchAlgorithm
             i++;
         }
         System.out.println("Costo total: " + totalCost);
+    }
+//TODO Borrar metodo
+
+    private boolean validateResult() {
+        int n = 0;
+        for (List<Integer> route : routes) {
+            n += route.size();
+        }
+        if (n != vrpInstance.getNumberOfCustomers()) {
+            return (false);
+        }
+        int i = 0;
+        for (Integer route : this.costOfRoutes) {
+            if (route + (routes.get(i).size() * vrpInstance.getDropTime()) >= vrpInstance.getMaximumRouteTime()) {
+                return (false);
+            }
+            i++;
+        }
+
+        for (Integer route : this.routeDemands) {
+            if (route > vrpInstance.getVehicleCapacity()) {
+                return (false);
+            }
+        }
+
+        int ocurrences[] = new int[vrpInstance.getNumberOfCustomers()];
+        for (int j = 0; j < vrpInstance.getNumberOfCustomers(); j++) {
+            ocurrences[j] = 0;
+        }
+
+        for (List<Integer> route : routes) {
+            for (Integer element : route) {
+                ocurrences[element - 1] = ocurrences[element - 1] + 1;
+            }
+        }
+
+        for (int j = 0; j < vrpInstance.getNumberOfCustomers(); j++) {
+            if (ocurrences[j] != 1) {
+                return (false);
+            }
+        }
+        return (true);
     }
 
     private static class Index {
