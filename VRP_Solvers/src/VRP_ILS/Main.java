@@ -90,7 +90,8 @@ public class Main {
             writeFile(solution, InstanceName);
         } catch (Exception e) {
             System.out.print("Error: ");
-            System.out.println(e.getMessage());
+            System.out.println(e);
+            e.printStackTrace();
             System.exit(1);
         }
     }
