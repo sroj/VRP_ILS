@@ -22,6 +22,7 @@ public class IteratedLocalSearchAlgorithm
 //    int[] quantityBeforePartition;
 //    int numberOfPartitionIndexes;
     int totalCost;
+    private static final double mili = 1000000000;
     //FIN de estructuras para representar una solución al problema
     VehicleRoutingProblem vrpInstance;
 
@@ -73,10 +74,19 @@ public class IteratedLocalSearchAlgorithm
 
     @Override
     public SolutionSet execute() {
-        //TODO aqui coloqué un return chimbo, para probar la escritura enel archivo
-        return (new ILSSolutionSet(1, 1,
-                1, 1, 1, "hola"));
-
+        int iteration=0;
+        int bestIteration=0;
+        long tIni = System.nanoTime();
+        //TODO Aca va el algoritmo que simon no quiere hacer
+        
+        long tFinBest = System.nanoTime();
+        
+        long tFin = System.nanoTime();
+        double tBest = (tFinBest - tIni)/mili;
+        double tTotal = (tFin - tIni)/mili;
+        String finalRoutes = routesToString();
+        return (new ILSSolutionSet(1, bestIteration,tBest,tTotal,routes.size(), 
+                iteration, finalRoutes));
     }
 
     private void initializePartition() {
@@ -211,6 +221,18 @@ public class IteratedLocalSearchAlgorithm
             }
         }
         return (true);
+    }
+
+    private String routesToString() {
+        String s= "";
+        for (List<Integer> route : routes) {
+            s = s+ "0 ";
+            for (Integer element : route) {
+                s = s + element + " " ; 
+            }
+            s = s + "0\n\n";           
+        }
+        return s;
     }
 
     private static class Index {

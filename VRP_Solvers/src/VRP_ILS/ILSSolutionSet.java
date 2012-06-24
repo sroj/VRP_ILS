@@ -19,16 +19,15 @@ public class ILSSolutionSet extends SolutionSet {
     private int numberOfRoutes;
     private String routes;
 
-    public ILSSolutionSet(int bestDistance, int bestIteration, int bestTime,
-            int numRoutes, int numberOfIt, String routes) {
+    public ILSSolutionSet(int bestDistance, int bestIteration, double bestTime,
+           double totalTime, int numRoutes, int numberOfIt, String routes) {
         //TODO arreglar esto
-        super(0.0);
+        super(totalTime);
         this.bestDistance = bestDistance;
         this.bestIteration = bestIteration;
         this.bestTime = bestTime;
         this.numberOfRoutes = numRoutes;
         this.numberOfIterations = numberOfIt;
-        //ACA DEBERIA SER STRCPY??
         this.routes = routes;
     }
 
@@ -79,4 +78,6 @@ public class ILSSolutionSet extends SolutionSet {
     public void setRoutes(String routes) {
         this.routes = routes;
     }
+
+    
 }
