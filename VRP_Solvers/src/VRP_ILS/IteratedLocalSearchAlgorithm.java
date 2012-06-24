@@ -13,7 +13,7 @@ import java.util.List;
 public class IteratedLocalSearchAlgorithm
         implements MetaheuristicOptimizationAlgorithm {
 
-    //INICIO de estructuras para representar una solucion al problema    
+    //INICIO de estructuras para representar una solucion al problema
     List<List<Integer>> routes;
     List<Integer> costOfRoutes;
     List<Integer> routeDemands;
@@ -25,6 +25,8 @@ public class IteratedLocalSearchAlgorithm
     private static final double mili = 1000000000;
     //FIN de estructuras para representar una solución al problema
     VehicleRoutingProblem vrpInstance;
+    int maxIter = 100000;
+    List<List<Integer>> bestRoutes;
 
     public IteratedLocalSearchAlgorithm(VehicleRoutingProblem vrpInstance) {
         int numberOfCustomers = vrpInstance.getNumberOfCustomers();
@@ -54,6 +56,7 @@ public class IteratedLocalSearchAlgorithm
         boolean valid = validateResult();
         printResult();
         System.out.println("Es valida: " + valid);
+        this.bestRoutes = cloneRoutes(this.routes);
     }
 
     private void mergeRoutes(Index index) {
@@ -74,19 +77,38 @@ public class IteratedLocalSearchAlgorithm
 
     @Override
     public SolutionSet execute() {
-        int iteration=0;
-        int bestIteration=0;
+        int iteration = 0;
+        int bestIteration = 0;
         long tIni = System.nanoTime();
-        //TODO Aca va el algoritmo que simon no quiere hacer
-        
+        int i = 0;
+        //TODO Aca va el algoritmo que Simon no quiere hacer
+        while (i < this.maxIter) {
+            this.localSearch();
+            this.acceptanceCriterion();
+            this.perturbate();
+            i += 1;
+        }
         long tFinBest = System.nanoTime();
-        
+
         long tFin = System.nanoTime();
-        double tBest = (tFinBest - tIni)/mili;
-        double tTotal = (tFin - tIni)/mili;
+        double tBest = (tFinBest - tIni) / mili;
+        double tTotal = (tFin - tIni) / mili;
         String finalRoutes = routesToString();
-        return (new ILSSolutionSet(1, bestIteration,tBest,tTotal,routes.size(), 
+        return (new ILSSolutionSet(1, bestIteration, tBest, tTotal, routes.size(),
                 iteration, finalRoutes));
+    }
+
+    private List<List<Integer>> cloneRoutes(List<List<Integer>> orig) {
+        List<List<Integer>> clon =
+                new ArrayList(this.vrpInstance.getNumberOfCustomers());
+        for (int i = 0; i < orig.size(); i++) {
+            clon.add(new ArrayList<Integer>(
+                    this.vrpInstance.getNumberOfCustomers()));
+            for (int j = 0; j < orig.get(i).size(); j++) {
+                clon.get(i).add(new Integer(orig.get(i).get(j)));
+            }
+        }
+        return clon;
     }
 
     private void initializePartition() {
@@ -180,8 +202,8 @@ public class IteratedLocalSearchAlgorithm
         }
         System.out.println("Costo total: " + totalCost);
     }
-//TODO Borrar metodo
 
+    //TODO Borrar metodo
     private boolean validateResult() {
         int n = 0;
         for (List<Integer> route : routes) {
@@ -224,15 +246,27 @@ public class IteratedLocalSearchAlgorithm
     }
 
     private String routesToString() {
-        String s= "";
-        for (List<Integer> route : routes) {
-            s = s+ "0 ";
+        String s = "";
+        for (List<Integer> route : bestRoutes) {
+            s = s + "0 ";
             for (Integer element : route) {
-                s = s + element + " " ; 
+                s = s + element + " ";
             }
-            s = s + "0\n\n";           
+            s = s + "0\n\n";
         }
         return s;
+    }
+
+    private void localSearch() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void acceptanceCriterion() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void perturbate() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     private static class Index {

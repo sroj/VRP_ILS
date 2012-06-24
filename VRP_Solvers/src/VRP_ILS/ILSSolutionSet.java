@@ -20,7 +20,7 @@ public class ILSSolutionSet extends SolutionSet {
     private String routes;
 
     public ILSSolutionSet(int bestDistance, int bestIteration, double bestTime,
-           double totalTime, int numRoutes, int numberOfIt, String routes) {
+            double totalTime, int numRoutes, int numberOfIt, String routes) {
         //TODO arreglar esto
         super(totalTime);
         this.bestDistance = bestDistance;
@@ -78,6 +78,4 @@ public class ILSSolutionSet extends SolutionSet {
     public void setRoutes(String routes) {
         this.routes = routes;
     }
-
-    
 }
