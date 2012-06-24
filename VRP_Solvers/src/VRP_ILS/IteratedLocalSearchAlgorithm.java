@@ -20,7 +20,7 @@ public class IteratedLocalSearchAlgorithm
     int totalCost;
     int totalDistance;
     //FIN de estructuras para representar una solución al problema
-    private static final double mili = 1000000000;    
+    private static final double mili = 1000000000;
     VehicleRoutingProblem vrpInstance;
     int maxIter = 100000;
     List<List<Integer>> bestRoutes;
@@ -35,7 +35,7 @@ public class IteratedLocalSearchAlgorithm
         routeDemands = new ArrayList<Integer>(numberOfCustomers);
         this.vrpInstance = vrpInstance;
         this.totalCost = this.vrpInstance.getDropTime() * numberOfCustomers;
-        this.totalDistance=0;
+        this.totalDistance = 0;
         constructInitialSolution();
     }
 
@@ -75,8 +75,8 @@ public class IteratedLocalSearchAlgorithm
 
     @Override
     public ILSSolutionSet execute() {
-        int iteration=0;
-        int bestIteration=0;
+        int iteration = 0;
+        int bestIteration = 0;
         long tIni = System.nanoTime();
         int i = 0;
         //TODO Aca va el algoritmo que Simon no quiere hacer
@@ -92,8 +92,8 @@ public class IteratedLocalSearchAlgorithm
         double tBest = (tFinBest - tIni) / mili;
         double tTotal = (tFin - tIni) / mili;
         String finalRoutes = routesToString();
-        return (new ILSSolutionSet(1, bestIteration, tBest, tTotal, routes.size(),
-                iteration, finalRoutes));
+        return (new ILSSolutionSet(this.totalCost, bestIteration, tBest, tTotal, routes.size(),
+                iteration, finalRoutes, this.totalDistance));
     }
 
     private List<List<Integer>> cloneRoutes(List<List<Integer>> orig) {
@@ -117,7 +117,7 @@ public class IteratedLocalSearchAlgorithm
             cost = vrpInstance.getCost(0, i + 1) * 2;
             this.costOfRoutes.add(i, new Integer(cost));
             this.routeDemands.add(new Integer(vrpInstance.getCustomerDemand(i + 1)));
-            this.totalDistance+=cost;
+            this.totalDistance += cost;
             this.totalCost += cost;
             i++;
         }
