@@ -17,13 +17,10 @@ public class IteratedLocalSearchAlgorithm
     List<List<Integer>> routes;
     List<Integer> costOfRoutes;
     List<Integer> routeDemands;
-//    int[] customers;
-//    int[] partitionIndexes;
-//    int[] quantityBeforePartition;
-//    int numberOfPartitionIndexes;
     int totalCost;
-    private static final double mili = 1000000000;
+    int totalDistance;
     //FIN de estructuras para representar una solución al problema
+    private static final double mili = 1000000000;    
     VehicleRoutingProblem vrpInstance;
 
     public IteratedLocalSearchAlgorithm(VehicleRoutingProblem vrpInstance) {
@@ -36,6 +33,7 @@ public class IteratedLocalSearchAlgorithm
         routeDemands = new ArrayList<Integer>(numberOfCustomers);
         this.vrpInstance = vrpInstance;
         this.totalCost = this.vrpInstance.getDropTime() * numberOfCustomers;
+        this.totalDistance=0;
         constructInitialSolution();
     }
 
@@ -73,7 +71,7 @@ public class IteratedLocalSearchAlgorithm
     }
 
     @Override
-    public SolutionSet execute() {
+    public ILSSolutionSet execute() {
         int iteration=0;
         int bestIteration=0;
         long tIni = System.nanoTime();
@@ -85,8 +83,8 @@ public class IteratedLocalSearchAlgorithm
         double tBest = (tFinBest - tIni)/mili;
         double tTotal = (tFin - tIni)/mili;
         String finalRoutes = routesToString();
-        return (new ILSSolutionSet(1, bestIteration,tBest,tTotal,routes.size(), 
-                iteration, finalRoutes));
+        return (new ILSSolutionSet(totalCost, bestIteration,tBest,tTotal,routes.size(), 
+                iteration, finalRoutes, totalDistance));
     }
 
     private void initializePartition() {
@@ -97,6 +95,7 @@ public class IteratedLocalSearchAlgorithm
             cost = vrpInstance.getCost(0, i + 1) * 2;
             this.costOfRoutes.add(i, new Integer(cost));
             this.routeDemands.add(new Integer(vrpInstance.getCustomerDemand(i + 1)));
+            this.totalDistance+=cost;
             this.totalCost += cost;
             i++;
         }
@@ -169,6 +168,7 @@ public class IteratedLocalSearchAlgorithm
         this.routeDemands.remove(j);
         this.costOfRoutes.remove(j);
         this.totalCost = this.totalCost - saving;
+        this.totalDistance = this.totalDistance - saving;
     }
 
     private void printResult() {
@@ -224,7 +224,7 @@ public class IteratedLocalSearchAlgorithm
     }
 
     private String routesToString() {
-        String s= "";
+        String s= "\n\n";
         for (List<Integer> route : routes) {
             s = s+ "0 ";
             for (Integer element : route) {
