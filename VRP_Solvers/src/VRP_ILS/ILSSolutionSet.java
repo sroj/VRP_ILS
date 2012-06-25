@@ -12,7 +12,7 @@ import VRP.SolutionSet;
  */
 public class ILSSolutionSet extends SolutionSet {
 
-    private double bestDistance; //Con drop time
+    private double bestDistance;
     private int bestIteration;
     private int numberOfIterations;
     private double bestTime;
@@ -21,7 +21,8 @@ public class ILSSolutionSet extends SolutionSet {
     private String routes;
 
     public ILSSolutionSet(double bestDistance, int bestIteration, double bestTime,
-            double totalTime, int numRoutes, int numberOfIt, String routes, double totalDistance) {
+            double totalTime, int numRoutes, int numberOfIt, String routes,
+            double totalDistance) {
 
         super(totalTime);
         this.bestDistance = bestDistance;

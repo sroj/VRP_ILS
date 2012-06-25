@@ -54,24 +54,25 @@ public class Main {
             throws IOException {
         String outFileName = ("stat.").concat(instanceName);
         BufferedWriter out = new BufferedWriter(new FileWriter(outFileName));
-        out.write("Distancia de la mejor solicion (SIN DROP TIME): " + solution.getTotaldistance());
+        out.write("Distancia de la mejor solucion (SIN DROP TIME): " + solution.getTotaldistance());
         out.newLine();
-        out.write("Costo de la mejor solicion (CON DROP TIME): " + solution.getBestDistance());
+        out.write("Costo de la mejor solucion (CON DROP TIME): " + solution.getBestDistance());
         out.newLine();
         out.write("Iteracion de la mejor solucion: " + solution.getBestIteration());
         out.newLine();
         out.write("Iteraciones hechas por el programa: " + solution.getNumberOfIterations());
         out.newLine();
-        out.write("Tiempo en el que se encontro la primera solucion (s): " 
+        out.write("Tiempo en el que se encontro la mejor solucion (s): "
                 + solution.getBestTime());
         out.newLine();
-        out.write("Tiempo total de la corrida del algoritmo: " + solution.getExecutionTime());
+        out.write("Tiempo total de la corrida del algoritmo (s): " + solution.getExecutionTime());
         out.newLine();
         out.write("Numero de rutas de la solucion: " + solution.getNumberOfRoutes());
         out.newLine();
         out.newLine();
         out.write("Rutas conseguidas:");
-
+        out.newLine();
+        out.newLine();
         out.write(solution.getRoutes());
         out.close();
     }
@@ -104,10 +105,14 @@ public class Main {
             algorithm = new IteratedLocalSearchAlgorithm(vrp);
             ILSSolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
+            System.out.println("Ejecución finalizada");
+            System.out.println("Distancia de la mejor solucion encontrada (CON DROPTIME): "
+                    + solution.getBestDistance());
+            System.out.println("Distancia de la mejor solucion encontrada (SIN DROPTIME): "
+                    + solution.getTotaldistance());
         } catch (Exception e) {
-            System.out.print("Error: ");
-            System.out.println(e);
-            e.printStackTrace();
+            System.out.println("Excepcion atrapada en Main");
+            e.printStackTrace(System.out);
             System.exit(1);
         }
     }

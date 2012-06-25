@@ -13,22 +13,56 @@ public class IteratedLocalSearchAlgorithm
         implements MetaheuristicOptimizationAlgorithm {
 
     //INICIO de estructuras para representar una solucion al problema
-    List<List<Integer>> routes;
+    Integer[] customers;
+    List<List<Integer>> currentRoutes;
     List<Double> costOfRoutes;
     List<Integer> routeDemands;
     double totalCost;
     double totalDistance;
-    //FIN de estructuras para representar una solución al problema
-    private static final double mili = 1000000000;
-    VehicleRoutingProblem vrpInstance;
-    int maxIter = 100000;
     List<List<Integer>> bestRoutes;
+    double bestTotalCost;
+    double bestTotalDistance;
+    //FIN de estructuras para representar una solución al problema
+    //INICIO de parametros configurables por el usuario
+    int maxIter = 2;
+    int localSearchMaxIter = 3;
+    //FIN de parametros configurables por el usuario
+    VehicleRoutingProblem vrpInstance;
+    int numberOfCustomers;
+    private static final double mili = 1000000000.0;
+
+    //TODO solo para pruebas
+    private double calculateRouteDistance(List<List<Integer>> routes) {
+        double distance = 0;
+        double routeDistance;
+
+        for (int j = 0; j < routes.size(); j++) {
+            List<Integer> route = routes.get(j);
+            routeDistance = 0;
+            distance += vrpInstance.getCost(0, route.get(0));
+            routeDistance += vrpInstance.getCost(0, route.get(0));
+            for (int i = 1; i < route.size(); i++) {
+                distance += vrpInstance.getCost(route.get(i - 1), route.get(i));
+                routeDistance += vrpInstance.getCost(route.get(i - 1), route.get(i));
+            }
+            distance += vrpInstance.getCost(route.get(route.size() - 1), 0);
+            routeDistance += vrpInstance.getCost(route.get(route.size() - 1), 0);
+            costOfRoutes.set(j, routeDistance);
+
+        }
+        return distance;
+    }
 
     public IteratedLocalSearchAlgorithm(VehicleRoutingProblem vrpInstance) {
-        int numberOfCustomers = vrpInstance.getNumberOfCustomers();
-        routes = new ArrayList<List<Integer>>(numberOfCustomers);
+        numberOfCustomers = vrpInstance.getNumberOfCustomers();
+        customers = new Integer[numberOfCustomers + 1];
+        currentRoutes = new ArrayList<List<Integer>>(numberOfCustomers);
+        bestRoutes = new ArrayList<List<Integer>>(numberOfCustomers);
         for (int i = 0; i < numberOfCustomers; i++) {
-            routes.add(new ArrayList<Integer>(numberOfCustomers));
+            currentRoutes.add(new ArrayList<Integer>(numberOfCustomers));
+        }
+        for (int i = 0; i < numberOfCustomers + 1; i++) {
+            customers[i] = new Integer(i);
         }
         costOfRoutes = new ArrayList<Double>(numberOfCustomers);
         routeDemands = new ArrayList<Integer>(numberOfCustomers);
@@ -40,21 +74,27 @@ public class IteratedLocalSearchAlgorithm
 
     private void constructInitialSolution() {
         initializePartition();
-
         int n = vrpInstance.getNumberOfCustomers();
         double s[][] = new double[n][n];
-
         calculateSavings(s);
         Index index = getBestSaving(s);
         while (index.getSaving() >= 0) {
             mergeRoutes(index);
             index = getBestSaving(s);
         }
-        setFinalCost();
-//        boolean valid = validateResult();
-          printResult();
-//        System.out.println("Es valida: " + valid);
-        this.bestRoutes = cloneRoutes(this.routes);
+        updateBestRoutes();
+        this.totalDistance = calculateRouteDistance(bestRoutes);
+        this.totalCost = this.totalDistance
+                + (numberOfCustomers * vrpInstance.getDropTime());
+        bestTotalCost = totalCost;
+        bestTotalDistance = totalDistance;
+        boolean valid = validateResult();
+        //TODO Borrar estas impresiones
+        System.out.println("Es valida la solucion inicial: " + valid);
+        System.out.println("Distancia de la solucion inicial: " + totalDistance);
+        System.out.println("Distancia calculada completa: " + calculateRouteDistance(currentRoutes));
+        System.out.println("RUTAS INICIALES: ");
+        System.out.println(this.routesToString());
     }
 
     private void mergeRoutes(Index index) {
@@ -76,42 +116,65 @@ public class IteratedLocalSearchAlgorithm
     public ILSSolutionSet execute() {
         int iteration = 0;
         int bestIteration = 0;
-        long tIni = System.nanoTime();
-        int i = 0;
-//        while (i < this.maxIter) {
-//            this.localSearch();
-//            this.acceptanceCriterion();
-//            this.perturbate();
-//            i += 1;
-//        }
-        long tFinBest = System.nanoTime();
+        long tIni;
+        long tFin;
+        long tFinBest;
+        boolean accepted;
 
-        long tFin = System.nanoTime();
+        tIni = System.nanoTime();
+        tFinBest = System.nanoTime();
+        while (iteration < this.maxIter) {
+            localSearch();
+            accepted = acceptanceCriterion();
+            if (accepted) {
+                tFinBest = System.nanoTime();
+                bestIteration = iteration;
+            }
+            perturbate();
+            iteration += 1;
+        }
+        tFin = System.nanoTime();
         double tBest = (tFinBest - tIni) / mili;
         double tTotal = (tFin - tIni) / mili;
         String finalRoutes = routesToString();
-        return (new ILSSolutionSet(this.totalCost, bestIteration, tBest, tTotal, routes.size(),
-                iteration, finalRoutes, this.totalDistance));
+        //TODO borrar estas otras impresiones
+        System.out.println("Ruta final es valida: " + validateResult());
+        System.out.println("RUTAS FINALES: ");
+        System.out.println(this.routesToString());
+        double bestDistance = calculateRouteDistance(bestRoutes);
+        //TODO Borrar
+        System.out.println("Distancia de la mejor solucion recalculada: " + bestDistance);
+        return (new ILSSolutionSet(this.bestTotalDistance,
+                bestIteration, tBest, tTotal, bestRoutes.size(), iteration,
+                finalRoutes, this.bestTotalCost));
     }
 
-    private List<List<Integer>> cloneRoutes(List<List<Integer>> orig) {
-        List<List<Integer>> clon =
-                new ArrayList<List<Integer>>(this.vrpInstance.getNumberOfCustomers());
-        for (int i = 0; i < orig.size(); i++) {
-            clon.add(new ArrayList<Integer>(
-                    this.vrpInstance.getNumberOfCustomers()));
-            for (int j = 0; j < orig.get(i).size(); j++) {
-                clon.get(i).add(new Integer(orig.get(i).get(j)));
+    private void updateBestRoutes() {
+        bestRoutes.clear();
+        for (int i = 0; i < currentRoutes.size(); i++) {
+            bestRoutes.add(new ArrayList<Integer>(
+                    currentRoutes.get(i).size()));
+            for (int j = 0; j < currentRoutes.get(i).size(); j++) {
+                bestRoutes.get(i).add(currentRoutes.get(i).get(j));
             }
         }
-        return clon;
+    }
+
+    private void resetRoutes() {
+        currentRoutes.clear();
+        for (int i = 0; i < bestRoutes.size(); i++) {
+            currentRoutes.add(new ArrayList<Integer>(bestRoutes.get(i).size()));
+            for (int j = 0; j < bestRoutes.get(i).size(); j++) {
+                currentRoutes.get(i).add(bestRoutes.get(i).get(j));
+            }
+        }
     }
 
     private void initializePartition() {
         int i = 0;
         double cost;
-        for (List<Integer> route : this.routes) {
-            route.add(new Integer(i + 1));
+        for (List<Integer> route : this.currentRoutes) {
+            route.add(this.customers[i + 1]);
             cost = vrpInstance.getCost(0, i + 1) * 2;
             this.costOfRoutes.add(i, new Double(cost));
             this.routeDemands.add(new Integer(vrpInstance.getCustomerDemand(i + 1)));
@@ -167,7 +230,7 @@ public class IteratedLocalSearchAlgorithm
     private int getIndexOfRouteI(int elem) {
         Integer element = new Integer(elem);
         int i = 0;
-        for (List<Integer> route : routes) {
+        for (List<Integer> route : currentRoutes) {
             if (route.indexOf(element) == 0) {
                 return (i);
             }
@@ -179,7 +242,7 @@ public class IteratedLocalSearchAlgorithm
     private int getIndexOfRouteJ(int elem) {
         Integer element = new Integer(elem);
         int i = 0;
-        for (List<Integer> route : routes) {
+        for (List<Integer> route : currentRoutes) {
             if (route.indexOf(element) == (route.size() - 1)) {
                 return (i);
             }
@@ -189,12 +252,13 @@ public class IteratedLocalSearchAlgorithm
     }
 
     private void doMerge(int i, int j, double saving) {
-        this.routes.get(i).addAll(this.routes.get(j));
-        double newCost = getRouteCost(i);
+        this.currentRoutes.get(i).addAll(this.currentRoutes.get(j));
+        double newCost =
+                this.costOfRoutes.get(i) + this.costOfRoutes.get(j) - saving;
         this.costOfRoutes.set(i, newCost);
         int newDemand = this.routeDemands.get(i) + this.routeDemands.get(j);
         this.routeDemands.set(i, newDemand);
-        this.routes.remove(j);
+        this.currentRoutes.remove(j);
         this.routeDemands.remove(j);
         this.costOfRoutes.remove(j);
         this.totalCost = this.totalCost - saving;
@@ -203,7 +267,7 @@ public class IteratedLocalSearchAlgorithm
 
     private void printResult() {
         int i = 0;
-        for (List<Integer> route : routes) {
+        for (List<Integer> route : bestRoutes) {
             System.out.println("0" + route.toString() + "0");
             System.out.println("Costo ruta: " + costOfRoutes.get(i));
             i++;
@@ -214,16 +278,17 @@ public class IteratedLocalSearchAlgorithm
     //TODO Borrar metodo
     private boolean validateResult() {
         int n = 0;
-        for (List<Integer> route : routes) {
+        for (List<Integer> route : bestRoutes) {
             n += route.size();
         }
-        if (n != vrpInstance.getNumberOfCustomers()) {
-            return (false);
+        if (n != numberOfCustomers) {
+            return false;
         }
         int i = 0;
         for (Double route : this.costOfRoutes) {
-            if (route + (routes.get(i).size() * vrpInstance.getDropTime()) >= vrpInstance.getMaximumRouteTime()) {
-                return (false);
+            if (route + (bestRoutes.get(i).size() * vrpInstance.getDropTime())
+                    >= vrpInstance.getMaximumRouteTime()) {
+                return false;
             }
             i++;
         }
@@ -249,27 +314,27 @@ public class IteratedLocalSearchAlgorithm
 
         for (Integer route : this.routeDemands) {
             if (route > vrpInstance.getVehicleCapacity()) {
-                return (false);
+                return false;
             }
         }
 
-        int ocurrences[] = new int[vrpInstance.getNumberOfCustomers()];
-        for (int j = 0; j < vrpInstance.getNumberOfCustomers(); j++) {
+        int ocurrences[] = new int[numberOfCustomers];
+        for (int j = 0; j < numberOfCustomers; j++) {
             ocurrences[j] = 0;
         }
 
-        for (List<Integer> route : routes) {
+        for (List<Integer> route : bestRoutes) {
             for (Integer element : route) {
-                ocurrences[element - 1] = ocurrences[element - 1] + 1;
+                ocurrences[element - 1] += 1;
             }
         }
 
-        for (int j = 0; j < vrpInstance.getNumberOfCustomers(); j++) {
+        for (int j = 0; j < numberOfCustomers; j++) {
             if (ocurrences[j] != 1) {
-                return (false);
+                return false;
             }
         }
-        return (true);
+        return true;
     }
 
     private String routesToString() {
@@ -285,15 +350,144 @@ public class IteratedLocalSearchAlgorithm
     }
 
     private void localSearch() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        int i = 0;
+        while (i < localSearchMaxIter) {
+            generateNeighbor();
+            i += 1;
+        }
     }
 
-    private void acceptanceCriterion() {
-        throw new UnsupportedOperationException("Not yet implemented");
+    private void generateNeighbor() {
+        //Se generará un vecino a traves del metodo 2-Opt y si es mejor,
+        //quedara como nueva solucion.
+        int numberOfRoutes = currentRoutes.size();
+        int routeIndex =
+                Math.round((float) Math.random() * (numberOfRoutes - 1));
+        List<Integer> route = currentRoutes.get(routeIndex);
+        int routeSize = route.size();
+
+        if (routeSize == 3) {
+            //Hacer swap-city ya que no se puede hacer 2-Opt
+            int random = Math.round((float) Math.random());
+            int index0 = (random == 0) ? 0 : 2;
+            int index1 = 1;
+            if (index0 > index1) {
+                int swap = index1;
+                index1 = index0;
+                index0 = swap;
+            }
+            //Si vale la pena, hacer el swap
+            double deltaCost =
+                    costVariation(index0, index1, routeSize, routeIndex);
+            //TODO borrar esta impresion
+            System.out.println("Delta cost 3: " + deltaCost);
+            if (deltaCost < 0) {
+                Integer old0 = route.get(index0);
+                Integer old1 = route.get(index1);
+                //TODO borrar esta impresion
+                System.out.println("SWAPPING ESPECIAL: " + old0 + " " + old1);
+                route.set(index0, old1);
+                route.set(index1, old0);
+                this.totalCost += deltaCost;
+                this.totalDistance += deltaCost;
+                this.costOfRoutes.set(routeIndex, costOfRoutes.get(routeIndex)
+                        + deltaCost);
+//                System.out.println("Delta cost : " + deltaCost);
+            }
+        } else if (routeSize >= 3) {
+            //Hacer 2-Opt
+            int index0 =
+                    Math.round((float) Math.random() * (routeSize - 1));
+            int delta = Math.round((float) Math.random() * (routeSize - 2)) + 1;
+            int index1 = (index0 + delta) % routeSize;
+
+            if (index0 > index1) {
+                int swap = index1;
+                index1 = index0;
+                index0 = swap;
+            }
+            double deltaCost =
+                    costVariation(index0, index1, routeSize, routeIndex);
+            System.out.println("Delta cost +: " + deltaCost);
+            if (deltaCost < 0) {
+                Integer old0 = route.get(index0);
+                Integer old1 = route.get(index1);
+                //TODO borrar esta impresion
+                System.out.println("SWAPPING: " + old0 + " " + old1);
+                route.set(index0, old1);
+                route.set(index1, old0);
+                this.totalCost += deltaCost;
+                this.totalDistance += deltaCost;
+                //TODO borrar
+                double calculatedRouteDistance = calculateRouteCost(route);
+                if (calculatedRouteDistance != costOfRoutes.get(routeIndex) + deltaCost) {
+                    System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:");
+                    System.out.println(calculatedRouteDistance + " != " + costOfRoutes.get(routeIndex));
+                }
+
+                this.costOfRoutes.set(routeIndex, costOfRoutes.get(routeIndex) + deltaCost);
+//                System.out.println("Delta cost : " + deltaCost);
+            }
+        }
+        //TODO borrar esta impresion
+        System.out.println("Distancia actual: " + this.totalDistance);
+        System.out.println("Costo actual: " + this.totalCost);
+    }
+
+    private double calculateRouteCost(List<Integer> route) {
+        double routeDistance = 0;
+        routeDistance += vrpInstance.getCost(0, route.get(0));
+
+        for (int i = 1; i < route.size(); i++) {
+
+            routeDistance += vrpInstance.getCost(route.get(i - 1), route.get(i));
+        }
+
+        routeDistance += vrpInstance.getCost(route.get(route.size() - 1), 0);
+        return routeDistance;
+    }
+
+    private boolean acceptanceCriterion() {
+        if (totalDistance < bestTotalDistance) {
+            updateBestRoutes();
+            bestTotalCost = totalCost;
+            bestTotalDistance = totalDistance;
+            return true;
+        }
+        return false;
     }
 
     private void perturbate() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        //TODO implement this
+    }
+
+    private double costVariation(int customerIndex1, int customerIndex2,
+            int routeSize, int routeIndex) {
+
+        double variation = 0;
+        List<Integer> route = currentRoutes.get(routeIndex);
+
+        int customer0 = (customerIndex1 - 1) < 0
+                ? 0 : route.get(customerIndex1 - 1);
+        int customer1 = route.get(customerIndex1);
+        int customer2 = route.get(customerIndex2);
+        int customer3 = (customerIndex2 + 1) == routeSize
+                ? 0 : route.get(customerIndex2 + 1);
+
+        variation += vrpInstance.getCost(customer0, customer2);
+        //TODO borrar estas impresiones
+        System.out.println("Costo de " + customer0 + " a " + customer2 + " = " + vrpInstance.getCost(customer0, customer2));
+        variation += vrpInstance.getCost(customer1, customer3);
+        //TODO borrar estas impresiones
+        System.out.println("Costo de " + customer1 + " a " + customer3 + " = " + vrpInstance.getCost(customer1, customer3));
+        variation -= vrpInstance.getCost(customer0, customer1);
+        //TODO borrar estas impresiones
+        System.out.println("Costo de " + customer0 + " a " + customer1 + " = " + vrpInstance.getCost(customer0, customer1));
+        variation -= vrpInstance.getCost(customer2, customer3);
+        //TODO borrar estas impresiones
+        System.out.println("Costo de " + customer2 + " a " + customer3 + " = " + vrpInstance.getCost(customer2, customer3));
+
+        return variation;
     }
 
     private void setFinalCost() {
