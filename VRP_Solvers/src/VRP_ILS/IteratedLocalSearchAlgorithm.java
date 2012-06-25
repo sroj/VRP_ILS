@@ -145,8 +145,8 @@ public class IteratedLocalSearchAlgorithm
         double bestDistance = calculateRouteDistance(bestRoutes);
         //TODO Borrar
         System.out.println("Distancia de la mejor solucion recalculada: " + bestDistance);
-        
-        System.out.println("Es cieto esto " + (calculateRouteDistance(bestRoutes) ==totalDistance));
+
+        System.out.println("Es cieto esto " + (calculateRouteDistance(bestRoutes) == totalDistance));
         return (new ILSSolutionSet(this.bestTotalDistance,
                 bestIteration, tBest, tTotal, bestRoutes.size(), iteration,
                 finalRoutes, this.bestTotalCost));
@@ -369,35 +369,7 @@ public class IteratedLocalSearchAlgorithm
         List<Integer> route = currentRoutes.get(routeIndex);
         int routeSize = route.size();
 
-        if (routeSize == 3) {
-            //Hacer swap-city ya que no se puede hacer 2-Opt
-            int random = Math.round((float) Math.random());
-            int index0 = (random == 0) ? 0 : 2;
-            int index1 = 1;
-            if (index0 > index1) {
-                int swap = index1;
-                index1 = index0;
-                index0 = swap;
-            }
-            //Si vale la pena, hacer el swap
-            double deltaCost =
-                    costVariation(index0, index1, routeSize, routeIndex);
-            //TODO borrar esta impresion
-            System.out.println("Delta cost 3: " + deltaCost);
-            if (deltaCost < 0) {
-                Integer old0 = route.get(index0);
-                Integer old1 = route.get(index1);
-                //TODO borrar esta impresion
-                System.out.println("SWAPPING ESPECIAL: " + old0 + " " + old1);
-                route.set(index0, old1);
-                route.set(index1, old0);
-                this.totalCost += deltaCost;
-                this.totalDistance += deltaCost;
-                this.costOfRoutes.set(routeIndex, costOfRoutes.get(routeIndex)
-                        + deltaCost);
-//                System.out.println("Delta cost : " + deltaCost);
-            }
-        } else if (routeSize >= 3) {
+        if (routeSize >= 3) {
             //Hacer 2-Opt
             int index0 =
                     Math.round((float) Math.random() * (routeSize - 1));
@@ -409,30 +381,31 @@ public class IteratedLocalSearchAlgorithm
                 index1 = index0;
                 index0 = swap;
             }
-            double deltaCost =
-                    costVariation(index0, index1, routeSize, routeIndex);
-            System.out.println("Delta cost +: " + deltaCost);
-            if (deltaCost < 0) {
-                Integer old0 = route.get(index0);
-                Integer old1 = route.get(index1);
-                //TODO borrar esta impresion
-                System.out.println("SWAPPING: " + old0 + " " + old1);
-                route.set(index0, old1);
-                route.set(index1, old0);
+//            if (deltaCost < 0) {
+            Integer old0 = route.get(index0);
+            Integer old1 = route.get(index1);
+            System.out.println("SWAPPING: " + old0 + " " + old1);
+            double oldRouteDistance = calculateRouteCost(route);
+            //TODO borrar esta impresion
+
+            route.set(index0, old1);
+            route.set(index1, old0);
 //                this.totalCost += deltaCost;
 //                this.totalDistance += deltaCost;
-                
-                //TODO borrar
-                double calculatedRouteDistance = calculateRouteCost(route);
-//                if (calculatedRouteDistance != costOfRoutes.get(routeIndex) + deltaCost) {
-//                    System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:");
-//                    System.out.println(calculatedRouteDistance + " != " + costOfRoutes.get(routeIndex));
-//                }
 
-                this.costOfRoutes.set(routeIndex, calculatedRouteDistance);
-                setFinalCost();
+            //TODO borrar
+            double calculatedRouteDistance = calculateRouteCost(route);
+
+            double deltaCost =
+                    costVariation(index0, index1, routeSize, routeIndex);
+            System.out.println("Old cost: " + oldRouteDistance);
+            System.out.println("New cost: " + calculatedRouteDistance);
+            System.out.println("Delta cost +: " + deltaCost);
+
+            this.costOfRoutes.set(routeIndex, calculatedRouteDistance);
+            setFinalCost();
 //                System.out.println("Delta cost : " + deltaCost);
-            }
+//            }
         }
         //TODO borrar esta impresion
         System.out.println("Distancia actual: " + this.totalDistance);
@@ -441,14 +414,22 @@ public class IteratedLocalSearchAlgorithm
 
     private double calculateRouteCost(List<Integer> route) {
         double routeDistance = 0;
+        //TODO borrar
+        System.out.println("Calculando costo a mano sobre ruta: ");
+        System.out.println(route);
         routeDistance += vrpInstance.getCost(0, route.get(0));
+        //TODO borrar
+        System.out.println("Costo de depot a " + route.get(0) + ": " + vrpInstance.getCost(0, route.get(0)));
 
         for (int i = 1; i < route.size(); i++) {
 
             routeDistance += vrpInstance.getCost(route.get(i - 1), route.get(i));
+            //TODO borrar
+            System.out.println("Costo de " + route.get(i - 1) + " a " + route.get(i) + ": " + vrpInstance.getCost(i - 1, route.get(i)));
         }
-
+        //TODO borrar
         routeDistance += vrpInstance.getCost(route.get(route.size() - 1), 0);
+        System.out.println("Costo de " + route.get(route.size() - 1) + " a depot: " + vrpInstance.getCost(route.get(route.size() - 1), 0));
         return routeDistance;
     }
 
@@ -479,18 +460,23 @@ public class IteratedLocalSearchAlgorithm
         int customer3 = (customerIndex2 + 1) == routeSize
                 ? 0 : route.get(customerIndex2 + 1);
 
-        variation += vrpInstance.getCost(customer0, customer2);
+        variation -= vrpInstance.getCost(customer0, customer2);
         //TODO borrar estas impresiones
-   //     System.out.println("Costo de " + customer0 + " a " + customer2 + " = " + vrpInstance.getCost(customer0, customer2));
-        variation += vrpInstance.getCost(customer1, customer3);
+        System.out.println();
+        System.out.println("COSTO de " + customer0 + " a " + customer2 + " = "
+                + vrpInstance.getCost(customer0, customer2));
+        variation -= vrpInstance.getCost(customer1, customer3);
         //TODO borrar estas impresiones
-    //    System.out.println("Costo de " + customer1 + " a " + customer3 + " = " + vrpInstance.getCost(customer1, customer3));
-        variation -= vrpInstance.getCost(customer0, customer1);
+        System.out.println("COSTO de " + customer1 + " a " + customer3 + " = "
+                + vrpInstance.getCost(customer1, customer3));
+        variation += vrpInstance.getCost(customer0, customer1);
         //TODO borrar estas impresiones
-  //      System.out.println("Costo de " + customer0 + " a " + customer1 + " = " + vrpInstance.getCost(customer0, customer1));
-        variation -= vrpInstance.getCost(customer2, customer3);
+        System.out.println("COSTO de " + customer0 + " a " + customer1 + " = "
+                + vrpInstance.getCost(customer0, customer1));
+        variation += vrpInstance.getCost(customer2, customer3);
         //TODO borrar estas impresiones
-  //      System.out.println("Costo de " + customer2 + " a " + customer3 + " = " + vrpInstance.getCost(customer2, customer3));
+        System.out.println("COSTO de " + customer2 + " a " + customer3 + " = "
+                + vrpInstance.getCost(customer2, customer3));
 
         return variation;
     }
