@@ -82,17 +82,18 @@ public class IteratedLocalSearchAlgorithm
             mergeRoutes(index);
             index = getBestSaving(s);
         }
+        setFinalCost();
         updateBestRoutes();
-        this.totalDistance = calculateRouteDistance(bestRoutes);
-        this.totalCost = this.totalDistance
-                + (numberOfCustomers * vrpInstance.getDropTime());
+//        this.totalDistance = calculateRouteDistance(bestRoutes);
+//        this.totalCost = this.totalDistance
+//                + (numberOfCustomers * vrpInstance.getDropTime());
         bestTotalCost = totalCost;
         bestTotalDistance = totalDistance;
         boolean valid = validateResult();
         //TODO Borrar estas impresiones
         System.out.println("Es valida la solucion inicial: " + valid);
         System.out.println("Distancia de la solucion inicial: " + totalDistance);
-        System.out.println("Distancia calculada completa: " + calculateRouteDistance(currentRoutes));
+        //System.out.println("Distancia calculada completa: " + calculateRouteDistance(currentRoutes));
         System.out.println("RUTAS INICIALES: ");
         System.out.println(this.routesToString());
     }
@@ -102,8 +103,8 @@ public class IteratedLocalSearchAlgorithm
         int j = getIndexOfRouteJ(index.j);
         if (i != -1 && j != -1) {
             double costIJ = getRouteCost(i) + getRouteCost(j)
-                    + ((routes.get(i).size() + routes.get(j).size())
-                    * vrpInstance.getDropTime()) - index.saving;            
+                    + ((currentRoutes.get(i).size() + currentRoutes.get(j).size())
+                    * vrpInstance.getDropTime()) - index.saving;
             int demandIJ = this.routeDemands.get(i) + this.routeDemands.get(j);
             if (costIJ < vrpInstance.getMaximumRouteTime()
                     && demandIJ <= vrpInstance.getVehicleCapacity() && i != j) {
@@ -215,15 +216,15 @@ public class IteratedLocalSearchAlgorithm
         }
         return (new Index(x + 1, y + 1, max));
     }
-    
-    private double getRouteCost(int i){
+
+    private double getRouteCost(int i) {
         double cost;
-        
-        cost = vrpInstance.getCost(0, routes.get(i).get(0));
-            for (int j = 0; j < routes.get(i).size() - 1; j++) {
-                cost += vrpInstance.getCost(routes.get(i).get(j), routes.get(i).get(j + 1));
-            }
-            cost+= vrpInstance.getCost(routes.get(i).get(routes.get(i).size() - 1), 0);
+
+        cost = vrpInstance.getCost(0, currentRoutes.get(i).get(0));
+        for (int j = 0; j < currentRoutes.get(i).size() - 1; j++) {
+            cost += vrpInstance.getCost(currentRoutes.get(i).get(j), currentRoutes.get(i).get(j + 1));
+        }
+        cost += vrpInstance.getCost(currentRoutes.get(i).get(currentRoutes.get(i).size() - 1), 0);
         return cost;
     }
 
@@ -253,8 +254,7 @@ public class IteratedLocalSearchAlgorithm
 
     private void doMerge(int i, int j, double saving) {
         this.currentRoutes.get(i).addAll(this.currentRoutes.get(j));
-        double newCost =
-                this.costOfRoutes.get(i) + this.costOfRoutes.get(j) - saving;
+        double newCost = getRouteCost(i);
         this.costOfRoutes.set(i, newCost);
         int newDemand = this.routeDemands.get(i) + this.routeDemands.get(j);
         this.routeDemands.set(i, newDemand);
@@ -296,17 +296,17 @@ public class IteratedLocalSearchAlgorithm
         double costoRuta;
         i = 0;
         int demandaRuta;
-        for (List<Integer> route : routes) {
+        for (List<Integer> route : currentRoutes) {
             costoRuta = vrpInstance.getCost(0, route.get(0));
-            demandaRuta=0;
+            demandaRuta = 0;
             for (int j = 0; j < route.size() - 1; j++) {
                 costoRuta += vrpInstance.getCost(route.get(j), route.get(j + 1));
-                demandaRuta+= vrpInstance.getCustomerDemand(route.get(j));
+                demandaRuta += vrpInstance.getCustomerDemand(route.get(j));
             }
-            demandaRuta+= vrpInstance.getCustomerDemand(route.get(route.size()-1));
+            demandaRuta += vrpInstance.getCustomerDemand(route.get(route.size() - 1));
             costoRuta += vrpInstance.getCost(route.get(route.size() - 1), 0);
-            if (this.costOfRoutes.get(i) != costoRuta || this.routeDemands.get(i)!=demandaRuta) {
-                return(false);
+            if (this.costOfRoutes.get(i) != costoRuta || this.routeDemands.get(i) != demandaRuta) {
+                return (false);
             }
             costo += costoRuta;
             i++;
@@ -491,11 +491,11 @@ public class IteratedLocalSearchAlgorithm
     }
 
     private void setFinalCost() {
-        this.totalCost = vrpInstance.getNumberOfCustomers()*vrpInstance.getDropTime();
+        this.totalCost = vrpInstance.getNumberOfCustomers() * vrpInstance.getDropTime();
         this.totalDistance = 0;
         for (Double route : this.costOfRoutes) {
-            totalCost+=route;
-            totalDistance +=route;
+            totalCost += route;
+            totalDistance += route;
         }
     }
 
