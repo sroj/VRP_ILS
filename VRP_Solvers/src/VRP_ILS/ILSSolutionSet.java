@@ -12,16 +12,16 @@ import VRP.SolutionSet;
  */
 public class ILSSolutionSet extends SolutionSet {
 
-    private int bestDistance;
+    private double bestDistance; //Con drop time
     private int bestIteration;
     private int numberOfIterations;
     private double bestTime;
     private int numberOfRoutes;
-    private int totaldistance;
+    private double totaldistance;
     private String routes;
 
-    public ILSSolutionSet(int bestDistance, int bestIteration, double bestTime,
-            double totalTime, int numRoutes, int numberOfIt, String routes, int totalDistance) {
+    public ILSSolutionSet(double bestDistance, int bestIteration, double bestTime,
+            double totalTime, int numRoutes, int numberOfIt, String routes, double totalDistance) {
 
         super(totalTime);
         this.bestDistance = bestDistance;
@@ -33,11 +33,11 @@ public class ILSSolutionSet extends SolutionSet {
         this.totaldistance = totalDistance;
     }
 
-    public int getBestDistance() {
+    public double getBestDistance() {
         return bestDistance;
     }
 
-    public void setBestDistance(int bestDistance) {
+    public void setBestDistance(double bestDistance) {
         this.bestDistance = bestDistance;
     }
 
@@ -81,11 +81,11 @@ public class ILSSolutionSet extends SolutionSet {
         this.routes = routes;
     }
 
-    public int getTotaldistance() {
+    public double getTotaldistance() {
         return totaldistance;
     }
 
-    public void setTotaldistance(int totaldistance) {
+    public void setTotaldistance(double totaldistance) {
         this.totaldistance = totaldistance;
     }
 }

@@ -1,6 +1,5 @@
 package VRP_ILS;
 
-import VRP.SolutionSet;
 import VRP.VehicleRoutingProblem;
 import java.io.*;
 
@@ -27,7 +26,7 @@ public class Main {
         int maxRouteTime = Integer.parseInt(separator[i + 2]);
         int dropTime = Integer.parseInt(separator[i + 3]);
         vrp = new VehicleRoutingProblem(n, capacity, maxRouteTime, dropTime);
-        int coord[][] = new int[vrp.getNumberOfCustomers() + 1][2];
+        double coord[][] = new double[vrp.getNumberOfCustomers() + 1][2];
         line = file.readLine();
         separator = line.split(" ");
         i = 0;
@@ -77,14 +76,14 @@ public class Main {
         out.close();
     }
 
-    private static void fillMatrix(int[][] coord) throws Exception {
-        int xd;
-        int yd;
+    private static void fillMatrix(double[][] coord) throws Exception {
+        double xd;
+        double yd;
         for (int i = 0; i < coord.length; i++) {
             for (int j = i + 1; j < coord.length; j++) {
                 xd = coord[i][0] - coord[j][0];
                 yd = coord[i][1] - coord[j][1];
-                int distance = (int) Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
+                double distance = Math.sqrt((xd * xd) + (yd * yd));
                 vrp.addCost(i, j, distance);
                 vrp.addCost(j, i, distance);
             }
