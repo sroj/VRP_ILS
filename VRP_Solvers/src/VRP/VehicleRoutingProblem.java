@@ -11,7 +11,7 @@ public class VehicleRoutingProblem {
     private int maximumRouteTime;
     private int dropTime;
     private int[] customerDemands;
-    private int[][] costs;
+    private double[][] costs;
 
     /**
      * Constructor.
@@ -29,7 +29,7 @@ public class VehicleRoutingProblem {
         // demanda alguna de ningun producto.
         this.customerDemands[0] = 0;
 
-        this.costs = new int[numberOfCustomers + 1][numberOfCustomers + 1];
+        this.costs = new double[numberOfCustomers + 1][numberOfCustomers + 1];
 
         //Se inicializa en costo "infinito" el arreglo de costos, para
         //el hecho de que algunas rutas son invalidas.
@@ -76,11 +76,11 @@ public class VehicleRoutingProblem {
         this.vehicleCapacity = vehicleCapacity;
     }
 
-    public void addCost(int origin, int destiny, int cost) {
+    public void addCost(int origin, int destiny, double cost) {
         this.costs[origin][destiny] = cost;
     }
 
-    public int getCost(int origin, int destiny) {
+    public double getCost(int origin, int destiny) {
         return this.costs[origin][destiny];
     }
 

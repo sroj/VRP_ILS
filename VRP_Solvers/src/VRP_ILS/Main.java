@@ -54,9 +54,9 @@ public class Main {
             throws IOException {
         String outFileName = ("stat.").concat(instanceName);
         BufferedWriter out = new BufferedWriter(new FileWriter(outFileName));
-        out.write("Distancia de la mejor solicion (SIN DROP TIME): " + solution.getTotaldistance());
+        out.write("Distancia de la mejor solucion (SIN DROP TIME): " + solution.getTotaldistance());
         out.newLine();
-        out.write("Costo de la mejor solicion (CON DROP TIME): " + solution.getBestDistance());
+        out.write("Costo de la mejor solucion (CON DROP TIME): " + solution.getBestDistance());
         out.newLine();
         out.write("Iteracion de la mejor solucion: " + solution.getBestIteration());
         out.newLine();
@@ -84,7 +84,7 @@ public class Main {
             for (int j = i + 1; j < coord.length; j++) {
                 xd = coord[i][0] - coord[j][0];
                 yd = coord[i][1] - coord[j][1];
-                int distance = (int) Math.ceil(Math.sqrt((xd * xd) + (yd * yd)));
+                double distance = Math.sqrt((xd * xd) + (yd * yd));
                 vrp.addCost(i, j, distance);
                 vrp.addCost(j, i, distance);
             }
@@ -105,6 +105,11 @@ public class Main {
             algorithm = new IteratedLocalSearchAlgorithm(vrp);
             ILSSolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
+            System.out.println("Ejecución finalizada");
+            System.out.println("Distancia de la mejor solucion encontrada (CON DROPTIME): "
+                    + solution.getBestDistance());
+            System.out.println("Distancia de la mejor solucion encontrada (SIN DROPTIME): "
+                    + solution.getTotaldistance());
         } catch (Exception e) {
             System.out.println("Excepcion atrapada en Main");
             e.printStackTrace(System.out);
