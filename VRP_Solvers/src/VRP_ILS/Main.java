@@ -1,6 +1,5 @@
 package VRP_ILS;
 
-import VRP.SolutionSet;
 import VRP.VehicleRoutingProblem;
 import java.io.*;
 
@@ -63,7 +62,7 @@ public class Main {
         out.newLine();
         out.write("Iteraciones hechas por el programa: " + solution.getNumberOfIterations());
         out.newLine();
-        out.write("Tiempo en el que se encontro la primera solucion (s): " 
+        out.write("Tiempo en el que se encontro la primera solucion (s): "
                 + solution.getBestTime());
         out.newLine();
         out.write("Tiempo total de la corrida del algoritmo: " + solution.getExecutionTime());
