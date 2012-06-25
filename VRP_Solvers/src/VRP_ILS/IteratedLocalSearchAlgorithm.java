@@ -63,8 +63,7 @@ public class IteratedLocalSearchAlgorithm
                     * vrpInstance.getDropTime()) - index.saving;
             int demandIJ = this.routeDemands.get(i) + this.routeDemands.get(j);
             if (costIJ < vrpInstance.getMaximumRouteTime()
-                    && demandIJ <= vrpInstance.getVehicleCapacity() && i != j) {
-
+                    && demandIJ <= vrpInstance.getVehicleCapacity() && i != j) { 
                 doMerge(i, j, index.saving);
             }
         }
