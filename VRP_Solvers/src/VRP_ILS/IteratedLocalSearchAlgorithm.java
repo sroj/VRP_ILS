@@ -24,8 +24,8 @@ public class IteratedLocalSearchAlgorithm
     double bestTotalDistance;
     //FIN de estructuras para representar una solución al problema
     //INICIO de parametros configurables por el usuario
-    int maxIter = 1000;
-    int localSearchMaxIter = 1000;
+    int maxIter = 100000;
+    int localSearchMaxIter = 100000;
     //FIN de parametros configurables por el usuario
     VehicleRoutingProblem vrpInstance;
     int numberOfCustomers;
@@ -34,21 +34,13 @@ public class IteratedLocalSearchAlgorithm
     //TODO solo para pruebas
     private double calculateRouteDistance(List<List<Integer>> routes) {
         double distance = 0;
-        double routeDistance;
-
         for (int j = 0; j < routes.size(); j++) {
             List<Integer> route = routes.get(j);
-            routeDistance = 0;
             distance += vrpInstance.getCost(0, route.get(0));
-            routeDistance += vrpInstance.getCost(0, route.get(0));
             for (int i = 1; i < route.size(); i++) {
                 distance += vrpInstance.getCost(route.get(i - 1), route.get(i));
-                routeDistance += vrpInstance.getCost(route.get(i - 1), route.get(i));
             }
             distance += vrpInstance.getCost(route.get(route.size() - 1), 0);
-            routeDistance += vrpInstance.getCost(route.get(route.size() - 1), 0);
-            //costOfRoutes.set(j, routeDistance);
-
         }
         return distance;
     }
@@ -136,7 +128,17 @@ public class IteratedLocalSearchAlgorithm
         double tTotal = (tFin - tIni) / mili;
         String finalRoutes = routesToString();
         double bestDistance = calculateRouteDistance(bestRoutes);
-        return (new ILSSolutionSet(this.bestTotalDistance,
+        if (bestDistance != this.bestTotalDistance) {
+            System.out.println("ERROR: DISTANCIAS INVALIDAS");
+        }
+        if (!validateResult()) {
+            System.out.println("ERROR: SOLUCION NO VALIDADA");
+        } else {
+            System.out.println("OK VALIDACION");
+        }
+        this.bestTotalCost = bestDistance
+                + vrpInstance.getNumberOfCustomers() * vrpInstance.getDropTime();
+        return (new ILSSolutionSet(bestDistance,
                 bestIteration, tBest, tTotal, bestRoutes.size(), iteration,
                 finalRoutes, this.bestTotalCost));
     }
@@ -282,7 +284,7 @@ public class IteratedLocalSearchAlgorithm
             }
             i++;
         }
-        double costo = 0;
+
         double costoRuta;
         i = 0;
         int demandaRuta;
@@ -295,17 +297,11 @@ public class IteratedLocalSearchAlgorithm
             }
             demandaRuta += vrpInstance.getCustomerDemand(route.get(route.size() - 1));
             costoRuta += vrpInstance.getCost(route.get(route.size() - 1), 0);
-            if (demandaRuta > vrpInstance.getVehicleCapacity()) {
+            if (demandaRuta > vrpInstance.getVehicleCapacity()
+                    || costoRuta >= vrpInstance.getMaximumRouteTime()) {
                 return false;
             }
-            costo += costoRuta;
             i++;
-        }
-
-        for (Integer route : this.routeDemands) {
-            if (route > vrpInstance.getVehicleCapacity()) {
-                return false;
-            }
         }
 
         int ocurrences[] = new int[numberOfCustomers];
