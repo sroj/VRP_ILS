@@ -62,16 +62,17 @@ public class Main {
         out.newLine();
         out.write("Iteraciones hechas por el programa: " + solution.getNumberOfIterations());
         out.newLine();
-        out.write("Tiempo en el que se encontro la primera solucion (s): "
+        out.write("Tiempo en el que se encontro la mejor solucion (s): "
                 + solution.getBestTime());
         out.newLine();
-        out.write("Tiempo total de la corrida del algoritmo: " + solution.getExecutionTime());
+        out.write("Tiempo total de la corrida del algoritmo (s): " + solution.getExecutionTime());
         out.newLine();
         out.write("Numero de rutas de la solucion: " + solution.getNumberOfRoutes());
         out.newLine();
         out.newLine();
         out.write("Rutas conseguidas:");
-
+        out.newLine();
+        out.newLine();
         out.write(solution.getRoutes());
         out.close();
     }
@@ -105,9 +106,8 @@ public class Main {
             ILSSolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
         } catch (Exception e) {
-            System.out.print("Error: ");
-            System.out.println(e);
-            e.printStackTrace();
+            System.out.println("Excepcion atrapada en Main");
+            e.printStackTrace(System.out);
             System.exit(1);
         }
     }
