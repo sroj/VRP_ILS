@@ -131,9 +131,9 @@ public class IteratedLocalSearchAlgorithm
                 tFinBest = System.nanoTime();
                 bestIteration = iteration;
             }
-            boolean p =perturbate();
-            while(!p){
-                p =perturbate();
+            boolean p = perturbate();
+            while (!p) {
+                p = perturbate();
             }
             iteration += 1;
         }
@@ -460,7 +460,6 @@ public class IteratedLocalSearchAlgorithm
         int routeIndex2 = (routeIndex1 + delta) % numberOfRoutes;
         if (routeIndex1 != routeIndex2) {
             resetRoutes();
-            double oldDistance = calculateRouteDistance(currentRoutes);
             List<Integer> route1 = currentRoutes.get(routeIndex1);
             List<Integer> route2 = currentRoutes.get(routeIndex2);
             int routeSize1 = route1.size();
