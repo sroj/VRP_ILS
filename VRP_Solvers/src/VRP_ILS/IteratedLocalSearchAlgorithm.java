@@ -390,6 +390,13 @@ public class IteratedLocalSearchAlgorithm
                 route.set(index1, old0);
                 this.totalCost += deltaCost;
                 this.totalDistance += deltaCost;
+                //TODO borrar
+                double calculatedRouteDistance = calculateRouteCost(route);
+                if (calculatedRouteDistance != costOfRoutes.get(routeIndex) + deltaCost) {
+                    System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:");
+                    System.out.println(calculatedRouteDistance + " != " + costOfRoutes.get(routeIndex));
+                }
+
                 this.costOfRoutes.set(routeIndex, costOfRoutes.get(routeIndex) + deltaCost);
 //                System.out.println("Delta cost : " + deltaCost);
             }
@@ -397,6 +404,19 @@ public class IteratedLocalSearchAlgorithm
         //TODO borrar esta impresion
         System.out.println("Distancia actual: " + this.totalDistance);
         System.out.println("Costo actual: " + this.totalCost);
+    }
+
+    private double calculateRouteCost(List<Integer> route) {
+        double routeDistance = 0;
+        routeDistance += vrpInstance.getCost(0, route.get(0));
+
+        for (int i = 1; i < route.size(); i++) {
+
+            routeDistance += vrpInstance.getCost(route.get(i - 1), route.get(i));
+        }
+
+        routeDistance += vrpInstance.getCost(route.get(route.size() - 1), 0);
+        return routeDistance;
     }
 
     private boolean acceptanceCriterion() {
