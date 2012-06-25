@@ -24,8 +24,8 @@ public class IteratedLocalSearchAlgorithm
     double bestTotalDistance;
     //FIN de estructuras para representar una solución al problema
     //INICIO de parametros configurables por el usuario
-    int maxIter = 100;
-    int localSearchMaxIter = 3;
+    int maxIter = 1000;
+    int localSearchMaxIter = 1000;
     //FIN de parametros configurables por el usuario
     VehicleRoutingProblem vrpInstance;
     int numberOfCustomers;
@@ -84,18 +84,12 @@ public class IteratedLocalSearchAlgorithm
         }
         setFinalCost();
         updateBestRoutes();
-//        this.totalDistance = calculateRouteDistance(bestRoutes);
-//        this.totalCost = this.totalDistance
-//                + (numberOfCustomers * vrpInstance.getDropTime());
         bestTotalCost = totalCost;
         bestTotalDistance = totalDistance;
         boolean valid = validateResult();
-        //TODO Borrar estas impresiones
         System.out.println("Es valida la solucion inicial: " + valid);
         System.out.println("Distancia de la solucion inicial: " + totalDistance);
-        //System.out.println("Distancia calculada completa: " + calculateRouteDistance(currentRoutes));
-        System.out.println("RUTAS INICIALES: ");
-        System.out.println(this.routesToString());
+
     }
 
     private void mergeRoutes(Index index) {
@@ -141,15 +135,7 @@ public class IteratedLocalSearchAlgorithm
         double tBest = (tFinBest - tIni) / mili;
         double tTotal = (tFin - tIni) / mili;
         String finalRoutes = routesToString();
-        //TODO borrar estas otras impresiones
-        System.out.println("Ruta final es valida: " + validateResult());
-        System.out.println("RUTAS FINALES: ");
-        System.out.println(this.routesToString());
         double bestDistance = calculateRouteDistance(bestRoutes);
-        //TODO Borrar
-        System.out.println("Distancia de la mejor solucion recalculada: " + bestDistance);
-
-        System.out.println("Es cieto esto " + (calculateRouteDistance(bestRoutes) == totalDistance));
         return (new ILSSolutionSet(this.bestTotalDistance,
                 bestIteration, tBest, tTotal, bestRoutes.size(), iteration,
                 finalRoutes, this.bestTotalCost));
@@ -280,7 +266,6 @@ public class IteratedLocalSearchAlgorithm
         System.out.println("Costo total: " + this.totalDistance);
     }
 
-    //TODO Borrar metodo
     private boolean validateResult() {
         int n = 0;
         for (List<Integer> route : bestRoutes) {
@@ -383,55 +368,33 @@ public class IteratedLocalSearchAlgorithm
                 index1 = index0;
                 index0 = swap;
             }
-//            if (deltaCost < 0) {
+
             Integer old0 = route.get(index0);
             Integer old1 = route.get(index1);
-            System.out.println("SWAPPING: " + old0 + " " + old1);
             double oldRouteDistance = calculateRouteCost(route);
-            //TODO borrar esta impresion
 
             route.set(index0, old1);
             route.set(index1, old0);
-//                this.totalCost += deltaCost;
-//                this.totalDistance += deltaCost;
 
-            //TODO borrar
             double calculatedRouteDistance = calculateRouteCost(route);
-
-            double deltaCost =
-                    costVariation(index0, index1, routeSize, routeIndex);
-            System.out.println("Old cost: " + oldRouteDistance);
-            System.out.println("New cost: " + calculatedRouteDistance);
-            System.out.println("Delta cost +: " + deltaCost);
-
-            this.costOfRoutes.set(routeIndex, calculatedRouteDistance);
-            setFinalCost();
-//                System.out.println("Delta cost : " + deltaCost);
-//            }
+            if (calculatedRouteDistance - oldRouteDistance < 0) {
+                this.costOfRoutes.set(routeIndex, calculatedRouteDistance);
+                setFinalCost();
+            } else {
+                //Revertir el swap
+                route.set(index0, old0);
+                route.set(index1, old1);
+            }
         }
-        //TODO borrar esta impresion
-        System.out.println("Distancia actual: " + this.totalDistance);
-        System.out.println("Costo actual: " + this.totalCost);
     }
 
     private double calculateRouteCost(List<Integer> route) {
         double routeDistance = 0;
-        //TODO borrar
-        System.out.println("Calculando costo a mano sobre ruta: ");
-        System.out.println(route);
         routeDistance += vrpInstance.getCost(0, route.get(0));
-        //TODO borrar
-        System.out.println("Costo de depot a " + route.get(0) + ": " + vrpInstance.getCost(0, route.get(0)));
-
         for (int i = 1; i < route.size(); i++) {
-
             routeDistance += vrpInstance.getCost(route.get(i - 1), route.get(i));
-            //TODO borrar
-            System.out.println("Costo de " + route.get(i - 1) + " a " + route.get(i) + ": " + vrpInstance.getCost(i - 1, route.get(i)));
         }
-        //TODO borrar
         routeDistance += vrpInstance.getCost(route.get(route.size() - 1), 0);
-        System.out.println("Costo de " + route.get(route.size() - 1) + " a depot: " + vrpInstance.getCost(route.get(route.size() - 1), 0));
         return routeDistance;
     }
 
@@ -512,23 +475,9 @@ public class IteratedLocalSearchAlgorithm
                 ? 0 : route.get(customerIndex2 + 1);
 
         variation -= vrpInstance.getCost(customer0, customer2);
-        //TODO borrar estas impresiones
-        System.out.println();
-        System.out.println("COSTO de " + customer0 + " a " + customer2 + " = "
-                + vrpInstance.getCost(customer0, customer2));
         variation -= vrpInstance.getCost(customer1, customer3);
-        //TODO borrar estas impresiones
-        System.out.println("COSTO de " + customer1 + " a " + customer3 + " = "
-                + vrpInstance.getCost(customer1, customer3));
         variation += vrpInstance.getCost(customer0, customer1);
-        //TODO borrar estas impresiones
-        System.out.println("COSTO de " + customer0 + " a " + customer1 + " = "
-                + vrpInstance.getCost(customer0, customer1));
         variation += vrpInstance.getCost(customer2, customer3);
-        //TODO borrar estas impresiones
-        System.out.println("COSTO de " + customer2 + " a " + customer3 + " = "
-                + vrpInstance.getCost(customer2, customer3));
-
         return variation;
     }
 

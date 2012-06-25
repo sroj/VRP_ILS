@@ -106,9 +106,9 @@ public class Main {
             ILSSolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
             System.out.println("Ejecución finalizada");
-            System.out.println("Distancia de la mejor solucion encontrada (CON DROPTIME): "
+            System.out.println("Mejor distancia (CON DROPTIME): "
                     + solution.getBestDistance());
-            System.out.println("Distancia de la mejor solucion encontrada (SIN DROPTIME): "
+            System.out.println("Mejor distancia (SIN DROPTIME): "
                     + solution.getTotaldistance());
         } catch (Exception e) {
             System.out.println("Excepcion atrapada en Main");
