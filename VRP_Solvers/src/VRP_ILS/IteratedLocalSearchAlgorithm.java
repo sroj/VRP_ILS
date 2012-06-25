@@ -13,7 +13,7 @@ public class IteratedLocalSearchAlgorithm
         implements MetaheuristicOptimizationAlgorithm {
 
     //INICIO de estructuras para representar una solucion al problema
-    List<Integer> customers;
+    Integer[] customers;
     List<List<Integer>> routes;
     List<Integer> costOfRoutes;
     List<Integer> routeDemands;
@@ -27,13 +27,13 @@ public class IteratedLocalSearchAlgorithm
 
     public IteratedLocalSearchAlgorithm(VehicleRoutingProblem vrpInstance) {
         int numberOfCustomers = vrpInstance.getNumberOfCustomers();
-        customers = new ArrayList<Integer>(numberOfCustomers + 1);
+        customers = new Integer[numberOfCustomers + 1];
         routes = new ArrayList<List<Integer>>(numberOfCustomers);
         for (int i = 0; i < numberOfCustomers; i++) {
             routes.add(new ArrayList<Integer>(numberOfCustomers));
         }
         for (int i = 0; i < numberOfCustomers + 1; i++) {
-            customers.add(new Integer(i));
+            customers[i] = new Integer(i);
         }
         costOfRoutes = new ArrayList<Integer>(numberOfCustomers);
         routeDemands = new ArrayList<Integer>(numberOfCustomers);
@@ -58,7 +58,7 @@ public class IteratedLocalSearchAlgorithm
         boolean valid = validateResult();
         printResult();
         System.out.println("Es valida: " + valid);
-        this.bestRoutes = cloneRoutes(this.routes);
+        this.updateBestRoutes();
     }
 
     private void mergeRoutes(Index index) {
@@ -100,24 +100,32 @@ public class IteratedLocalSearchAlgorithm
                 iteration, finalRoutes, this.totalDistance));
     }
 
-    private List<List<Integer>> cloneRoutes(List<List<Integer>> orig) {
-        List<List<Integer>> clon =
-                new ArrayList(this.vrpInstance.getNumberOfCustomers());
-        for (int i = 0; i < orig.size(); i++) {
-            clon.add(new ArrayList<Integer>(
-                    this.vrpInstance.getNumberOfCustomers()));
-            for (int j = 0; j < orig.get(i).size(); j++) {
-                clon.get(i).add(new Integer(orig.get(i).get(j)));
+    private void updateBestRoutes() {
+        bestRoutes.clear();
+        for (int i = 0; i < routes.size(); i++) {
+            bestRoutes.add(new ArrayList<Integer>(
+                    routes.get(i).size()));
+            for (int j = 0; j < routes.get(i).size(); j++) {
+                bestRoutes.get(i).add(routes.get(i).get(j));
             }
         }
-        return clon;
+    }
+
+    private void resetRoutes() {
+        routes.clear();
+        for (int i = 0; i < bestRoutes.size(); i++) {
+            routes.add(new ArrayList<Integer>(bestRoutes.get(i).size()));
+            for (int j = 0; j < bestRoutes.get(i).size(); j++) {
+                routes.get(i).add(bestRoutes.get(i).get(j));
+            }
+        }
     }
 
     private void initializePartition() {
         int i = 0;
         int cost;
         for (List<Integer> route : this.routes) {
-            route.add(new Integer(i + 1));
+            route.add(this.customers[i + 1]);
             cost = vrpInstance.getCost(0, i + 1) * 2;
             this.costOfRoutes.add(i, new Integer(cost));
             this.routeDemands.add(new Integer(vrpInstance.getCustomerDemand(i + 1)));
