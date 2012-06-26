@@ -24,7 +24,7 @@ public class IteratedLocalSearchAlgorithm
     double bestTotalDistance;
     //FIN de estructuras para representar una solución al problema
     //INICIO de parametros configurables por el usuario
-    int maxIter = 100000;
+    int maxIter = 10000;
     int localSearchMaxIter = 100000;
     //FIN de parametros configurables por el usuario
     VehicleRoutingProblem vrpInstance;
