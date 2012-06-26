@@ -54,9 +54,9 @@ public class Main {
             throws IOException {
         String outFileName = ("stat.").concat(instanceName);
         BufferedWriter out = new BufferedWriter(new FileWriter(outFileName));
-        out.write("Distancia de la mejor solucion (SIN DROP TIME): " + solution.getTotaldistance());
+        out.write("Distancia de la mejor solucion (CON DROP TIME): " + solution.getTotaldistance());
         out.newLine();
-        out.write("Costo de la mejor solucion (CON DROP TIME): " + solution.getBestDistance());
+        out.write("Costo de la mejor solucion (SIN DROP TIME): " + solution.getBestDistance());
         out.newLine();
         out.write("Iteracion de la mejor solucion: " + solution.getBestIteration());
         out.newLine();

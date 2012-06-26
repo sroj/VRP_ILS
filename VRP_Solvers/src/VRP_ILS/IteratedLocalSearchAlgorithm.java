@@ -78,10 +78,6 @@ public class IteratedLocalSearchAlgorithm
         updateBestRoutes();
         bestTotalCost = totalCost;
         bestTotalDistance = totalDistance;
-        boolean valid = validateResult();
-        System.out.println("Es valida la solucion inicial: " + valid);
-        System.out.println("Distancia de la solucion inicial: " + totalDistance);
-
     }
 
     private void mergeRoutes(Index index) {
@@ -128,14 +124,6 @@ public class IteratedLocalSearchAlgorithm
         double tTotal = (tFin - tIni) / mili;
         String finalRoutes = routesToString();
         double bestDistance = calculateRouteDistance(bestRoutes);
-        if (bestDistance != this.bestTotalDistance) {
-            System.out.println("ERROR: DISTANCIAS INVALIDAS");
-        }
-        if (!validateResult()) {
-            System.out.println("ERROR: SOLUCION NO VALIDADA");
-        } else {
-            System.out.println("OK VALIDACION");
-        }
         this.bestTotalCost = bestDistance
                 + vrpInstance.getNumberOfCustomers() * vrpInstance.getDropTime();
         return (new ILSSolutionSet(bestDistance,
@@ -274,17 +262,11 @@ public class IteratedLocalSearchAlgorithm
             n += route.size();
         }
         if (n != numberOfCustomers) {
+            System.out.println("Invalida por numero de customers");
             return false;
         }
-        int i = 0;
-        for (Double route : this.costOfRoutes) {
-            if (route + (bestRoutes.get(i).size() * vrpInstance.getDropTime())
-                    >= vrpInstance.getMaximumRouteTime()) {
-                return false;
-            }
-            i++;
-        }
 
+        int i;
         double costoRuta;
         i = 0;
         int demandaRuta;
@@ -299,6 +281,7 @@ public class IteratedLocalSearchAlgorithm
             costoRuta += vrpInstance.getCost(route.get(route.size() - 1), 0);
             if (demandaRuta > vrpInstance.getVehicleCapacity()
                     || costoRuta >= vrpInstance.getMaximumRouteTime()) {
+                System.out.println("Invalida por demanda o por maximum route time");
                 return false;
             }
             i++;
@@ -317,6 +300,7 @@ public class IteratedLocalSearchAlgorithm
 
         for (int j = 0; j < numberOfCustomers; j++) {
             if (ocurrences[j] != 1) {
+                System.out.println("Invalida por repeticion de customer");
                 return false;
             }
         }
