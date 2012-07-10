@@ -17,8 +17,4 @@ public abstract class SolutionSet {
     public double getExecutionTime() {
         return executionTime;
     }
-
-    public void setExecutionTime(double executionTime) {
-        this.executionTime = executionTime;
-    }
 }

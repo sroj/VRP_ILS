@@ -14,7 +14,16 @@ public class VehicleRoutingProblem {
     private double[][] costs;
 
     /**
-     * Constructor.
+     * Constructor que inicializa todos los parametros que definen completamente
+     * una instancia particular del VRP.
+     *
+     * @param numberOfCustomers Numero de clientes de la instancia
+     * @param vehicleCapacity Capacidad de los vehiculos (identica para todos)
+     * @param maximumRouteTime Restriccion: tiempo máximo que un vehiculo puede
+     * usar para atender una ruta
+     * @param dropTime Restriccion: tiempo que tarda cada vehiculo en descargar
+     * sus productos en la ubicacion que corresponde a cada cliente (igual para
+     * todos los clientes)
      */
     public VehicleRoutingProblem(int numberOfCustomers, int vehicleCapacity,
             int maximumRouteTime, int dropTime) {
@@ -31,7 +40,7 @@ public class VehicleRoutingProblem {
 
         this.costs = new double[numberOfCustomers + 1][numberOfCustomers + 1];
 
-        //Se inicializa en costo "infinito" el arreglo de costos, para
+        //Se inicializa en costo "infinito" el arreglo de costos, para simular
         //el hecho de que algunas rutas son invalidas.
         initializeCostsArray();
     }
@@ -39,7 +48,7 @@ public class VehicleRoutingProblem {
     private void initializeCostsArray() {
         for (int i = 0; i <= this.numberOfCustomers; i++) {
             for (int j = 0; j <= this.numberOfCustomers; j++) {
-                this.costs[i][j] = Integer.MAX_VALUE;
+                this.costs[i][j] = Double.MAX_VALUE;
             }
         }
     }
