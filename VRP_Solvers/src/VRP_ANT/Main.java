@@ -105,7 +105,7 @@ public class Main {
         String InstanceName = args[0];
         try {
             LoadData(InstanceName);
-            algorithm = new ANTAlgorithm(vrp);
+            algorithm = new ANTAlgorithm(vrp, 50000);
             ANTSolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
             System.out.println("Ejecución finalizada");
