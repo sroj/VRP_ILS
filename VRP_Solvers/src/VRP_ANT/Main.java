@@ -98,11 +98,11 @@ public class Main {
      * @param args Parametros pasados por linea de comandos
      */
     public static void main(String[] args) {
-        if (args.length != 8) {
+        if (args.length != 9) {
             System.out.println("Sintaxis incorrecta...");
             System.out.println("La sintaxis correcta es:");
             System.out.println("java Main <instancia> <maxIter> <p> <alfa> "
-                    + "<beta> <f> <g> <elitistAnts>");
+                    + "<beta> <g> <f> <elitistAnts> <localSearchMaxIter>");
             System.exit(1);
         }
         String InstanceName = args[0];
@@ -110,14 +110,15 @@ public class Main {
         double p = Double.parseDouble(args[2]);
         int alfa = Integer.parseInt(args[3]);
         int beta = Integer.parseInt(args[4]);
-        double f = Double.parseDouble(args[5]);
-        double g = Double.parseDouble(args[6]);
+        double g = Double.parseDouble(args[5]);
+        double f = Double.parseDouble(args[6]);
         int elitistAnts = Integer.parseInt(args[7]);
+        int localSearchMaxIter = Integer.parseInt(args[8]);
 
         try {
             LoadData(InstanceName);
             algorithm = new ANTAlgorithm(vrp, maxIter, p, alfa, beta, f, g,
-                    elitistAnts);
+                    elitistAnts, localSearchMaxIter);
             ANTSolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
             System.out.println("Ejecución finalizada");

@@ -30,7 +30,7 @@ public class IteratedLocalSearchAlgorithm
     VehicleRoutingProblem vrpInstance;
     int numberOfCustomers;
     private static final double mili = 1000000000.0;
-    
+
     private double calculateRouteDistance(List<List<Integer>> routes) {
         double distance = 0;
         for (int j = 0; j < routes.size(); j++) {
@@ -61,6 +61,7 @@ public class IteratedLocalSearchAlgorithm
         this.totalCost = this.vrpInstance.getDropTime() * numberOfCustomers;
         this.totalDistance = 0;
         constructInitialSolution();
+        System.out.println("Distancia inicial: " + bestTotalDistance);
     }
 
     private void constructInitialSolution() {

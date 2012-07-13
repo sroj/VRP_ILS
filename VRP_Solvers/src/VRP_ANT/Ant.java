@@ -29,9 +29,10 @@ public class Ant implements Comparable<Ant> {
     private ArrayList<Integer> feasibleCustomers;
     private ArrayList<Arc> usedArcs;
     VehicleRoutingProblem vrpInstance;
+    private final int localSearchMaxIter;
 
     public Ant(double[][] pheromones, VehicleRoutingProblem vrpInstance,
-            int alfa, int beta, double f, double g) {
+            int alfa, int beta, double f, double g, int localSearchMaxIter) {
         this.alfa = alfa;
         this.beta = beta;
         this.f = f;
@@ -50,6 +51,7 @@ public class Ant implements Comparable<Ant> {
         feasibleCustomers =
                 new ArrayList<>(numberOfCustomers + 1);
         usedArcs = new ArrayList<>(numberOfCustomers * numberOfCustomers);
+        this.localSearchMaxIter = localSearchMaxIter;
     }
 
     /**
@@ -178,6 +180,9 @@ public class Ant implements Comparable<Ant> {
                     + nextCustomer > 0 ? dropTime : 0;
             currentCustomer = nextCustomer;
         }
+        totalDistance += vrpInstance.getCost(currentCustomer, 0);
+        totalRouteTime += vrpInstance.getCost(currentCustomer, 0);
+        localSearch();
     }
 
     @Override
@@ -230,7 +235,7 @@ public class Ant implements Comparable<Ant> {
         return "Distancia: " + totalDistance;
     }
 
-    private class Arc {
+    private static class Arc {
 
         private int initialNode;
         private int endNode;
@@ -249,4 +254,61 @@ public class Ant implements Comparable<Ant> {
         }
     }
 
+    private void localSearch() {
+        int i = 0;
+        while (i < localSearchMaxIter) {
+            generateNeighbor();
+            i += 1;
+        }
+    }
+
+    private void generateNeighbor() {
+        //Se generará un vecino a traves del metodo 2-Opt y si es mejor,
+        //quedara como nueva solucion.
+        int numberOfRoutes = solution.size();
+        int routeIndex =
+                Math.round((float) Math.random() * (numberOfRoutes - 1));
+        ArrayList<Integer> route = solution.get(routeIndex);
+        int routeSize = route.size();
+
+        if (routeSize >= 3) {
+            //Hacer 2-Opt
+            int index0 =
+                    Math.round((float) Math.random() * (routeSize - 1));
+            int delta = Math.round((float) Math.random() * (routeSize - 2)) + 1;
+            int index1 = (index0 + delta) % routeSize;
+
+            if (index0 > index1) {
+                int swap = index1;
+                index1 = index0;
+                index0 = swap;
+            }
+
+            int old0 = route.get(index0);
+            int old1 = route.get(index1);
+            double oldRouteDistance = calculateRouteCost(route);
+
+            route.set(index0, old1);
+            route.set(index1, old0);
+
+            double calculatedRouteDistance = calculateRouteCost(route);
+            if (calculatedRouteDistance - oldRouteDistance < 0) {
+                totalDistance += calculatedRouteDistance - oldRouteDistance;
+            } else {
+                //Revertir el swap
+                route.set(index0, old0);
+                route.set(index1, old1);
+            }
+        }
+    }
+
+    private double calculateRouteCost(ArrayList<Integer> route) {
+        double routeDistance = 0;
+        routeDistance += vrpInstance.getCost(0, route.get(0));
+        for (int i = 1; i < route.size(); i++) {
+            routeDistance += vrpInstance.getCost(route.get(i - 1), route.get(i));
+        }
+        routeDistance += vrpInstance.getCost(route.get(route.size() - 1), 0);
+        return routeDistance;
+    }
 }
