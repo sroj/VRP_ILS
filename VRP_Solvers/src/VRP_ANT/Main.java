@@ -95,17 +95,29 @@ public class Main {
     }
 
     /**
-     * @param args the command line arguments
+     * @param args Parametros pasados por linea de comandos
      */
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("Numero de argumentos invalidos");
+        if (args.length != 8) {
+            System.out.println("Sintaxis incorrecta...");
+            System.out.println("La sintaxis correcta es:");
+            System.out.println("java Main <instancia> <maxIter> <p> <alfa> "
+                    + "<beta> <f> <g> <elitistAnts>");
             System.exit(1);
         }
         String InstanceName = args[0];
+        int maxIter = Integer.parseInt(args[1]);
+        double p = Double.parseDouble(args[2]);
+        int alfa = Integer.parseInt(args[3]);
+        int beta = Integer.parseInt(args[4]);
+        double f = Double.parseDouble(args[5]);
+        double g = Double.parseDouble(args[6]);
+        int elitistAnts = Integer.parseInt(args[7]);
+
         try {
             LoadData(InstanceName);
-            algorithm = new ANTAlgorithm(vrp, 50000);
+            algorithm = new ANTAlgorithm(vrp, maxIter, p, alfa, beta, f, g,
+                    elitistAnts);
             ANTSolutionSet solution = algorithm.execute();
             writeFile(solution, InstanceName);
             System.out.println("Ejecución finalizada");

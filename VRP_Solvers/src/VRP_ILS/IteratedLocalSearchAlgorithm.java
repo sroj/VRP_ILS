@@ -30,8 +30,7 @@ public class IteratedLocalSearchAlgorithm
     VehicleRoutingProblem vrpInstance;
     int numberOfCustomers;
     private static final double mili = 1000000000.0;
-
-    //TODO solo para pruebas
+    
     private double calculateRouteDistance(List<List<Integer>> routes) {
         double distance = 0;
         for (int j = 0; j < routes.size(); j++) {
