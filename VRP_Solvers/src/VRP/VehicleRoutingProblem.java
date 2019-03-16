@@ -24,6 +24,16 @@ public class VehicleRoutingProblem {
      * @param dropTime Restriccion: tiempo que tarda cada vehiculo en descargar
      * sus productos en la ubicacion que corresponde a cada cliente (igual para
      * todos los clientes)
+     *                 Конструктор, который инициализирует все параметры, которые полностью определяют
+     *      * конкретный экземпляр VRP.
+     *      *
+     *      * @param numberOfCustomers Количество клиентов экземпляра
+     *      * @ param vehicleCapacity емкость а / м (идент. для всех)
+     *      * @ param maximumRouteTime Restriccion: максимальное время, которое автомобиль может
+     *      * использование для обслуживания маршрута
+     *      * @ param dropTime Restriccion: время, необходимое для загрузки каждого автомобиля
+     *      * ваши продукты в месте, которое соответствует каждому клиенту (равному для
+     *      * все клиенты)
      */
     public VehicleRoutingProblem(int numberOfCustomers, int vehicleCapacity,
             int maximumRouteTime, int dropTime) {
@@ -36,12 +46,16 @@ public class VehicleRoutingProblem {
 
         // El customer 0 es en realidad el deposito de camiones, que no tiene
         // demanda alguna de ningun producto.
+        //Customer 0 на самом деле депо, которое не имеет
+        //спроса на любой из продуктов
         this.customerDemands[0] = 0;
 
         this.costs = new double[numberOfCustomers + 1][numberOfCustomers + 1];
 
         //Se inicializa en costo "infinito" el arreglo de costos, para simular
         //el hecho de que algunas rutas son invalidas.
+        //Инициализируется в "бесконечной" стоимости урегулирования затрат, чтобы имитировать
+        //тот факт, что некоторые маршруты недействительны.
         initializeCostsArray();
     }
 

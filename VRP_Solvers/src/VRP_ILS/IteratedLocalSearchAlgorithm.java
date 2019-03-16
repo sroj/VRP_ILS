@@ -13,6 +13,7 @@ public class IteratedLocalSearchAlgorithm
         implements MetaheuristicOptimizationAlgorithm {
 
     //INICIO de estructuras para representar una solucion al problema
+    // Начало структур для представления решения проблемы
     Integer[] customers;
     List<List<Integer>> currentRoutes;
     List<Double> costOfRoutes;
@@ -24,9 +25,12 @@ public class IteratedLocalSearchAlgorithm
     double bestTotalDistance;
     //FIN de estructuras para representar una solución al problema
     //INICIO de parametros configurables por el usuario
+    //Конец структур для представления решения проблемы
+    // Начало настраиваемых пользователем параметров
     int maxIter = 10000;
     int localSearchMaxIter = 100000;
     //FIN de parametros configurables por el usuario
+    // Конец настраиваемых пользователем параметров
     VehicleRoutingProblem vrpInstance;
     int numberOfCustomers;
     private static final double mili = 1000000000.0;
@@ -61,7 +65,8 @@ public class IteratedLocalSearchAlgorithm
         this.totalCost = this.vrpInstance.getDropTime() * numberOfCustomers;
         this.totalDistance = 0;
         constructInitialSolution();
-        System.out.println("Distancia inicial: " + bestTotalDistance);
+        System.out.println("Начальное расстояние: " + bestTotalDistance);
+        // Distancia inicial:
     }
 
     private void constructInitialSolution() {
@@ -250,10 +255,12 @@ public class IteratedLocalSearchAlgorithm
         int i = 0;
         for (List<Integer> route : bestRoutes) {
             System.out.println("0" + route.toString() + "0");
-            System.out.println("Costo ruta: " + costOfRoutes.get(i));
+            System.out.println("Стоимость маршрута: " + costOfRoutes.get(i));
+            // Costo ruta
             i++;
         }
-        System.out.println("Costo total: " + this.totalDistance);
+        System.out.println("Общая стоимость: " + this.totalDistance);
+        // Costo total
     }
 
     private boolean validateResult() {
@@ -262,7 +269,8 @@ public class IteratedLocalSearchAlgorithm
             n += route.size();
         }
         if (n != numberOfCustomers) {
-            System.out.println("Invalida por numero de customers");
+            System.out.println("неправильное количество клиентов");
+            // Invalida por numero de customers
             return false;
         }
 
@@ -281,7 +289,8 @@ public class IteratedLocalSearchAlgorithm
             costoRuta += vrpInstance.getCost(route.get(route.size() - 1), 0);
             if (demandaRuta > vrpInstance.getVehicleCapacity()
                     || costoRuta >= vrpInstance.getMaximumRouteTime()) {
-                System.out.println("Invalida por demanda o por maximum route time");
+                System.out.println("Неправильный спрос или максимальное время маршрута");
+                //Invalida por demanda o por maximum route time
                 return false;
             }
             i++;
@@ -300,7 +309,8 @@ public class IteratedLocalSearchAlgorithm
 
         for (int j = 0; j < numberOfCustomers; j++) {
             if (ocurrences[j] != 1) {
-                System.out.println("Invalida por repeticion de customer");
+                System.out.println("Неправильное повторение клиента");
+                // Invalida por repeticion de customer
                 return false;
             }
         }
@@ -330,6 +340,8 @@ public class IteratedLocalSearchAlgorithm
     private void generateNeighbor() {
         //Se generará un vecino a traves del metodo 2-Opt y si es mejor,
         //quedara como nueva solucion.
+        // Сосед будет сгенерирован через метод 2-Opt, и если лучше,
+        // останется новым решением.
         int numberOfRoutes = currentRoutes.size();
         int routeIndex =
                 Math.round((float) Math.random() * (numberOfRoutes - 1));
@@ -338,6 +350,7 @@ public class IteratedLocalSearchAlgorithm
 
         if (routeSize >= 3) {
             //Hacer 2-Opt
+            // Делаем 2-Opt
             int index0 =
                     Math.round((float) Math.random() * (routeSize - 1));
             int delta = Math.round((float) Math.random() * (routeSize - 2)) + 1;
