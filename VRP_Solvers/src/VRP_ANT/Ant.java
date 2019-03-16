@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 /**
  * La clase Ant representa a una hormiga individual.
- *
+ * Класс Ant представляет отдельного муравья.
  * @author Marlin Aranguren
  * @author Simon Rojas
  */
@@ -13,18 +13,22 @@ public class Ant implements Comparable<Ant> {
 
     private final int numberOfCustomers;
     //Variable compartida
+    // Общие переменные
     private double[][] pheromones;
     private double totalDistance;
     private double totalRouteTime;
     private double dropTime;
     //INICIO DE PARAMETROS DE AJUSTE
+    //НАЧАЛО НАСТРОЙКИ ПАРАМЕТРОВ
     private int alfa;
     private int beta;
     private double f;
     private double g;
     //FIN DE PARAMETROS DE AJUSTE
+    //КОНЕЦ НАСТРОЙКИ ПАРАМЕТРОВ
     private ArrayList<ArrayList<Integer>> solution;
     //No incluye el depot
+    //Не включает depot
     private ArrayList<Integer> notVisited;
     private ArrayList<Integer> feasibleCustomers;
     private ArrayList<Arc> usedArcs;
@@ -42,6 +46,7 @@ public class Ant implements Comparable<Ant> {
         dropTime = vrpInstance.getDropTime();
         this.pheromones = pheromones;
         //CUIDADO: Solo sirve en Java 7 (ya que se usa 'diamond inference')!
+        //Осторожно: он работает только в Java 7 (поскольку используется "diamond inference")!
         solution =
                 new ArrayList<>(numberOfCustomers + 1);
         notVisited = new ArrayList<>(numberOfCustomers + 1);
@@ -56,9 +61,11 @@ public class Ant implements Comparable<Ant> {
 
     /**
      * Prepara a esta hormiga para iniciar una nueva exploracion
-     *
+     * Подготовьте этого муравья, чтобы начать новое исследование
      * @param initialCustomer nuevo cliente inicial desde donde se iniciara la
      * busqueda
+     * новый начальный клиент с момента запуска поиска
+     *
      */
     public void reset() {
         totalRouteTime = 0;
@@ -121,7 +128,8 @@ public class Ant implements Comparable<Ant> {
                 }
             }
         }
-        throw new Exception("No se encontró un nuevo cliente al que viajar");
+        throw new Exception("Не найден новый клиент для путешествий");
+        //No se encontró un nuevo cliente al que viajar
     }
 
     private double getVisibility(int customer0, int customer1) {
@@ -232,8 +240,9 @@ public class Ant implements Comparable<Ant> {
 
     @Override
     public String toString() {
-        return "Distancia: " + totalDistance;
+        return "Дистанция: " + totalDistance;
     }
+    //Distancia:
 
     private static class Arc {
 
@@ -265,6 +274,8 @@ public class Ant implements Comparable<Ant> {
     private void generateNeighbor() {
         //Se generará un vecino a traves del metodo 2-Opt y si es mejor,
         //quedara como nueva solucion.
+        //Сосед будет сгенерирован через метод 2-Opt, и если лучше,
+        // останется новым решением.
         int numberOfRoutes = solution.size();
         int routeIndex =
                 Math.round((float) Math.random() * (numberOfRoutes - 1));
@@ -273,6 +284,7 @@ public class Ant implements Comparable<Ant> {
 
         if (routeSize >= 3) {
             //Hacer 2-Opt
+            //Сделать 2-Opt
             int index0 =
                     Math.round((float) Math.random() * (routeSize - 1));
             int delta = Math.round((float) Math.random() * (routeSize - 2)) + 1;
